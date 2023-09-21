@@ -10,6 +10,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  isAdmin: { // 添加了这个属性来判断是否是管理员
+    type: Boolean,
+    default: false,
+  },
 	// TODO: combine with Product
   cart: [
     {
@@ -19,12 +23,29 @@ const userSchema = new mongoose.Schema({
   ]
 });
 
+// 这两个部分是老师的代码 但是我瞅着可以直接用
 userSchema.pre('save', async function (next) {
-	// TODO
+  try {
+    if (!this.isModified('password')) {
+      return next();
+    }
+    let hashedPassword = await bcrypt.hash(this.password, 10);
+    this.password = hashedPassword;
+    return next();
+  } catch (err) {
+    return next(err);
+  }
 });
 
 // TODO
-userSchema.methods.comparePassword = undefined;
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  try {
+    let isMatched = await bcrypt.compare(candidatePassword, this.password);
+    return isMatched;
+  } catch (err) {
+    return next(err);
+  }
+};
 
 const User = mongoose.model('User', userSchema);
 
