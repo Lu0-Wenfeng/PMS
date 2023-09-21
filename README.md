@@ -12,9 +12,9 @@ npm start
 
 #### Frontend
 
-Run thses commands in ./PMS
 
 ```bash
+cd frontend
 npm install
 npm run dev
 ```
