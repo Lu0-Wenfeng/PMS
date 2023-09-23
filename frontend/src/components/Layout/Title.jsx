@@ -1,11 +1,11 @@
 import React from "react";
 import { HStack, Heading, Text } from "@chakra-ui/react";
 
-const Title = () => {
+const Title = ({ mobile }) => {
   return (
     <HStack textColor="white">
-      <Heading as="h1">Management</Heading>
-      <Text fontSize="lg" mt="4" fontWeight="bold">
+      <Heading as="h1">{mobile ? "M" : "Management"}</Heading>
+      <Text fontSize={mobile ? "md" : "lg"} mt="4" fontWeight="bold">
         Chuwa
       </Text>
     </HStack>
