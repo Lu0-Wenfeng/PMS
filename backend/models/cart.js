@@ -7,7 +7,7 @@ const cartSchema = new mongoose.Schema(
       {
         product: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: 'Product', // 参考产品模式
+          ref: 'product', // 参考产品模式
           required: true
         },
         quantity: {

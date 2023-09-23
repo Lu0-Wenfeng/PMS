@@ -1,6 +1,8 @@
-const db = require('../models');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+User = require('./models/user');
+Product = require('./models/product');
+cart = require('./models/cart');
 
 // Whether we should get a secret key ('your_secret_key_here') 
 // for JWT token signing.
@@ -56,7 +58,7 @@ exports.signup =  async (req, res) => {
       const userType = user.isAdmin ? 'admin' : 'regular';
   
       // Generate JWT token with user type as a claim
-      const token = jwt.sign({ userId: user._id, userType }, 'your_secret_key_here', {
+      const token = jwt.sign({ userId: user._id, userType }, process.env.JWT_SECRET, {
         expiresIn: '1h', // Token expiration time
       });
   
@@ -70,8 +72,9 @@ exports.signup =  async (req, res) => {
   
   // Logout Route (not usually needed for token-based authentication)
 exports.logout =  (req, res) => {
-    // You can implement logout logic here if necessary
     // For token-based authentication, the client can simply discard the token.
+    // 在前端 这里只需要丢弃令牌 例如：
+    // localStorage.removeItem('token');
     res.status(200).json({ message: 'Logout successful' });
   };
 

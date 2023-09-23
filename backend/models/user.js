@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
 });
 
 // 这两个部分是老师的代码 但是我瞅着可以直接用
-userSchema.pre('save', async function (next) {
+userSchema.pre('save', async function () {
   try {
     if (!this.isModified('password')) {
       return next();
