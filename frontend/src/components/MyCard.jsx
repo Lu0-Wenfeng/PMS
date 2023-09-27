@@ -11,9 +11,9 @@ const MyCard = ({ title, children }) => {
       borderColor="gray.300"
       boxShadow="md"
       borderRadius="md"
-      w={["90%", "70%", "50%"]}
+      w={["90%", "50%"]}
       m="auto"
-      mt={["20%", null, "10%"]}
+      my={["20%", "10%"]}
     >
       <CloseButton
         position="absolute"

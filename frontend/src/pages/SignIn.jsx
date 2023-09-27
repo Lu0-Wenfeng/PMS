@@ -19,7 +19,6 @@ const SignIn = () => {
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
-
   const handleClick = () => setShow(!show);
   const onEmailChange = (e) => {
     setEmail(e.target.value);
@@ -38,6 +37,25 @@ const SignIn = () => {
       setPasswordError("This field is required");
     } else {
       setPasswordError("");
+    }
+  };
+
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post("http://localhost:3000/sign-in", {
+        username: email,
+        password: password,
+      });
+      console.log(response);
+      if (response.data && response.data.token) {
+        localStorage.setItem("token", response.data.token);
+      }
+    } catch (error) {
+      if (error.response && error.response.data) {
+        console.error("Error loggin in:", error.response.data.message);
+      } else {
+        console.error("Error loggin in:", error);
+      }
     }
   };
 
@@ -85,12 +103,12 @@ const SignIn = () => {
             </InputRightElement>
           </InputGroup>
           {passwordError && (
-            <Text color="red.500" fontSize="sm" mt="1">
+            <Text color="red.500" fontSize="sm" mt="1" float="right">
               {passwordError}
             </Text>
           )}
         </Box>
-        <Button mb="2" bg="#5048E5" w="100%" textColor="white">
+        <Button my="2" bg="#5048E5" w="100%" textColor="white" onClick={handleLogin}>
           Sign In
         </Button>
         <Box
