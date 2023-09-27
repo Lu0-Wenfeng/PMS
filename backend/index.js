@@ -1,7 +1,7 @@
 require("dotenv").config();
 const cors = require("cors");
 const express = require("express");
-const router = require('../routes/auth.js');
+const router = require("./routes/auth");
 const mongoose = require("mongoose");
 
 const PORT = 3000;
@@ -10,19 +10,19 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use('/auth', router);
+app.use("/", router);
 
 // Connect to MongoDB
 const connectDB = async () => {
   try {
-    console.log('About to connect to MongoDB...');
+    console.log("About to connect to MongoDB...");
     await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
     });
-    console.log('Connected to MongoDB');
+    console.log("Connected to MongoDB");
   } catch (err) {
-    console.error('err:', err.message);
+    console.error("err:", err.message);
     process.exit(1);
   }
 };

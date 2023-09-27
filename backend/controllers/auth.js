@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-User = require('./models/user');
-Product = require('./models/product');
-cart = require('./models/cart');
+User = require('../models/user');
+Product = require('../models/product');
+cart = require('../models/cart');
 
 // Whether we should get a secret key ('your_secret_key_here') 
 // for JWT token signing.
@@ -39,19 +39,20 @@ exports.signup =  async (req, res) => {
   exports.signin = async (req, res) => {
     try {
       const { username, password } = req.body;
+      console.log(username, password);
   
       // Check if the user exists
       const user = await User.findOne({ username });
   
       if (!user) {
-        return res.status(401).json({ message: 'Invalid credentials' });
+        return res.status(401).json({ message: 'User Not exist' });
       }
   
       // Check password
       const isPasswordValid = await bcrypt.compare(password, user.password);
   
       if (!isPasswordValid) {
-        return res.status(401).json({ message: 'Invalid credentials' });
+        return res.status(401).json({ message: 'Incorrect Password' });
       }
   
       // Determine user type (admin or regular user)
