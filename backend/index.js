@@ -1,10 +1,16 @@
 require("dotenv").config();
+const cors = require("cors");
 const express = require("express");
 const router = require('../routes/auth.js');
 const mongoose = require("mongoose");
 
 const PORT = 3000;
 const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+app.use('/auth', router);
 
 // Connect to MongoDB
 const connectDB = async () => {
