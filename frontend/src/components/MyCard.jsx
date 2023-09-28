@@ -28,7 +28,7 @@ const MyCard = ({ title, children }) => {
         size="xl"
         onClick={handleClick}
       />
-      <Center fontSize="2xl" mt="2" mb="4" fontWeight="bold" color="black">
+      <Center fontSize="2xl" my="2" fontWeight="bold" color="black">
         {title}
       </Center>
       {children}
