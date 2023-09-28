@@ -1,13 +1,17 @@
 import { Grid, GridItem } from "@chakra-ui/react";
-import Footer from "./components/Layout/Footer";
-import Header from "./components/Layout/Header";
 import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Provider } from "react-redux";
+
+import Footer from "./components/Layout/Footer";
+import Header from "./components/Layout/Header";
+import Home from "./pages/Home";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import UpdatePassword from "./pages/UpdatePassword";
-import { Provider } from "react-redux";
+
 import store from "./store";
+import LoginSuccess from "./pages/LoginSuccess";
 
 function App() {
   const [searchInput, setSearchInput] = useState("");
@@ -27,10 +31,11 @@ function App() {
 
           <GridItem bg="white" area={"main"}>
             <Routes>
-              <Route path="/" element={<SignIn />} />
+              <Route path="/" element={<Home />} />
               <Route path="/sign-in" element={<SignIn />} />
               <Route path="/sign-up" element={<SignUp />} />
               <Route path="/update-pwd" element={<UpdatePassword />} />
+              <Route path="/success" element={<LoginSuccess />} />
             </Routes>
           </GridItem>
           <GridItem bg="#111827" area={"footer"}>

@@ -10,6 +10,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import MyCard from "../components/MyCard";
 
 const SignIn = () => {
@@ -18,9 +19,9 @@ const SignIn = () => {
   const [emailError, setEmailError] = useState("");
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const navigate = useNavigate();
 
   const inputStyles = {
-    type: "email",
     mt: "2",
     variant: "outline",
     border: "1px solid",
@@ -30,7 +31,6 @@ const SignIn = () => {
       borderColor: "blue.500",
       boxShadow: "0 0 0 1px #3182ce",
     },
-    autoFocus: true,
   };
 
   const buttonStyles = {
@@ -44,6 +44,19 @@ const SignIn = () => {
   };
 
   const handleClick = () => setShow(!show);
+
+  const onEmailBlur = () => {
+    if (!email) {
+      setEmailError("This field is required");
+    }
+  };
+
+  const onPasswordBlur = () => {
+    if (!password) {
+      setPasswordError("This field is required");
+    }
+  };
+
   const onEmailChange = (e) => {
     setEmail(e.target.value);
     if (!e.target.value) {
@@ -65,21 +78,50 @@ const SignIn = () => {
   };
 
   const handleLogin = async () => {
+    if (!email) {
+      setEmailError("This field is required");
+      return;
+    }
+    if (!password) {
+      setPasswordError("This field is required");
+      return;
+    }
+
     try {
       const response = await axios.post("http://localhost:3000/sign-in", {
-        username: email,
+        email: email,
         password: password,
       });
-      console.log(response);
       if (response.data && response.data.token) {
         localStorage.setItem("token", response.data.token);
+        alert("Login Successful");
+        navigate("/success");
       }
     } catch (error) {
       if (error.response && error.response.data) {
-        console.error("Error loggin in:", error.response.data.message);
+        console.error("Error loggin in:", error.response.data);
+        if (error.response.data.message === "User Not exist") {
+          setEmailError("User Not Exists");
+          console.error(
+            "(If-Else)Error logging in:",
+            error.response.data.message
+          );
+        } else if (error.response.data.message === "Incorrect Password") {
+          setPasswordError("Incorrect Password");
+          console.error(
+            "(If-Else)Error logging in:",
+            error.response.data.message
+          );
+        }
       } else {
         console.error("Error loggin in:", error);
       }
+    }
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleLogin();
     }
   };
 
@@ -92,6 +134,7 @@ const SignIn = () => {
             type="email"
             value={email}
             onChange={onEmailChange}
+            onBlur={onEmailBlur}
             placeholder="Enter your email"
             {...inputStyles}
             borderColor={emailError ? "red.500" : "gray.300"}
@@ -109,6 +152,7 @@ const SignIn = () => {
               type={show ? "text" : "password"}
               value={password}
               onChange={onPasswordChange}
+              onBlur={onPasswordBlur}
               placeholder="Enter your password"
               {...inputStyles}
             />
@@ -135,7 +179,7 @@ const SignIn = () => {
           mt="4"
           w="100%"
         >
-          <Text maxWidth="40%">
+          <Text maxWidth="50%">
             Don't have an account?
             <Link href="/sign-up" color="blue.500">
               {" "}

@@ -15,7 +15,7 @@ const Header = (onSearch) => {
 
   return (
     <Flex
-      px={isMobile ? "4" : "68px"}
+      px="2"
       pt="5px"
       justify="space-between"
       flexDirection={isMobile ? "column" : "row"}
