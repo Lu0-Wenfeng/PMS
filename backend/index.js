@@ -7,7 +7,11 @@ const mongoose = require("mongoose");
 const PORT = 3000;
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  })
+);
 app.use(express.json());
 
 app.use("/", router);
