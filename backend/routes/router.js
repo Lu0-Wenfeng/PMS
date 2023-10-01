@@ -5,12 +5,18 @@ const {
   signin: signIn,
   updatePassword,
 } = require("../controllers/auth");
-const { createProduct } = require("../controllers/productControllers");
+const { createProduct, getAllProducts, productDeatails } = require("../controllers/productControllers");
 
+
+// Auth Flow
 router.post("/sign-up", signUp);
 router.post("/sign-in", signIn);
 // router.post('/logout', logout)
 router.post("/update-pwd", updatePassword);
+
+// Product Flow
 router.post("/create-product", createProduct);
+router.get("/all-products", getAllProducts);
+router.get("/all-products/:id", productDeatails);
 
 module.exports = router;
