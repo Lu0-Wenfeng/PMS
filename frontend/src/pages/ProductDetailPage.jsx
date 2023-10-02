@@ -1,10 +1,10 @@
-// ProductDetailPage.js
 import React, { useState, useEffect } from 'react';
+import { Box, Heading, Text } from '@chakra-ui/react';
+import { useParams } from 'react-router-dom'; // Import useParams
 
-const ProductDetailPage = ({ match }) => {
+const ProductDetailPage = () => {
   const [productDetails, setProductDetails] = useState({});
-
-  const productId = match.params.id;
+  const { productId } = useParams(); // Use useParams to get the 'productId' parameter
 
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -25,16 +25,31 @@ const ProductDetailPage = ({ match }) => {
   }, [productId]);
 
   return (
-    <div>
-      <h1>Product Detail Page</h1>
-      <p>Name: {productDetails.name}</p>
-      <p>Price: ${productDetails.price}</p>
-      <p>Description: {productDetails.description}</p>
-      <p>Category: {productDetails.category}</p>
-      <p>inStockQuantity: {productDetails.inStockQuantity}</p>
-      <p>ImageUrl: {productDetails.productImageUrl}</p>
-    </div>
+    <Box p="4">
+      <Heading as="h1" mb="4">
+        Product Detail Page
+      </Heading>
+      <Text>
+        <strong>Name:</strong> {productDetails.name}
+      </Text>
+      <Text>
+        <strong>Price:</strong> ${productDetails.price}
+      </Text>
+      <Text>
+        <strong>Description:</strong> {productDetails.description}
+      </Text>
+      <Text>
+        <strong>Category:</strong> {productDetails.category}
+      </Text>
+      <Text>
+        <strong>In Stock Quantity:</strong> {productDetails.inStockQuantity}
+      </Text>
+      <Text>
+        <strong>Image URL:</strong> {productDetails.productImageUrl}
+      </Text>
+    </Box>
   );
 };
 
 export default ProductDetailPage;
+

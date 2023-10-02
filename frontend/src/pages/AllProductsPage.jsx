@@ -1,54 +1,51 @@
-import React, { useState, useEffect, useParams } from 'react';
-import { Box, Heading, Text } from '@chakra-ui/react';
+import React, { useState, useEffect } from 'react';
+import { Box, Heading, List, ListItem, Text } from '@chakra-ui/react';
 
-const ProductDetailPage = ({ match }) => {
-  const [productDetails, setProductDetails] = useState({});
-
-  const {productId} = useParams();
+const ProductsListPage = () => {
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    const fetchProductDetails = async () => {
+    const fetchProducts = async () => {
       try {
-        const response = await fetch(`/all-products/${productId}`);
+        const response = await fetch('/all-products');
         if (response.ok) {
-          const productDetails = await response.json();
-          setProductDetails(productDetails);
+          const productList = await response.json();
+          setProducts(productList);
         } else {
-          console.error('Failed to fetch product details');
+          console.error('Failed to fetch product list');
         }
       } catch (error) {
-        console.error('Error during product details fetch:', error);
+        console.error('Error during product list fetch:', error);
       }
     };
 
-    fetchProductDetails();
-  }, [productId]);
+    fetchProducts();
+  }, []); // Empty dependency array to fetch products only once when component mounts
 
   return (
     <Box p="4">
       <Heading as="h1" mb="4">
-        Product Detail Page
+        Products List Page
       </Heading>
-      <Text>
-        <strong>Name:</strong> {productDetails.name}
-      </Text>
-      <Text>
-        <strong>Price:</strong> ${productDetails.price}
-      </Text>
-      <Text>
-        <strong>Description:</strong> {productDetails.description}
-      </Text>
-      <Text>
-        <strong>Category:</strong> {productDetails.category}
-      </Text>
-      <Text>
-        <strong>In Stock Quantity:</strong> {productDetails.inStockQuantity}
-      </Text>
-      <Text>
-        <strong>Image URL:</strong> {productDetails.productImageUrl}
-      </Text>
+      {products.length === 0 ? (
+        <Text>No products available.</Text>
+      ) : (
+        <List>
+          {products.map((product) => (
+            <ListItem key={product.id}>
+              <strong>Name:</strong> {product.name} <br />
+              {/* <strong>Description:</strong> {product.description} <br />
+              <strong>Category:</strong> {product.category} <br /> */}
+              <strong>Price:</strong> ${product.price} <br />
+              {/* <strong>In Stock Quantity:</strong> {product.inStockQuantity} <br /> */}
+              <strong>Image URL:</strong> {product.productImageUrl}
+            </ListItem>
+          ))}
+        </List>
+      )}
     </Box>
   );
 };
 
-export default ProductDetailPage;
+export default ProductsListPage;
+
