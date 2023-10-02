@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Heading, List, ListItem, Text } from '@chakra-ui/react';
 
-const ProductsListPage = () => {
+const AllProductsPage = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -47,5 +47,5 @@ const ProductsListPage = () => {
   );
 };
 
-export default ProductsListPage;
+export default AllProductsPage;
 

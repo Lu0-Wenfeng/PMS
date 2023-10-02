@@ -127,7 +127,7 @@ const CreateProductPage = () => {
           />
         </FormControl>
 
-        <Button colorScheme="blue" type="submit" onClick={handleCreateProduct}>
+        <Button colorScheme="blue" type="button" onClick={handleCreateProduct}>
           Create Product
         </Button>
       </VStack>

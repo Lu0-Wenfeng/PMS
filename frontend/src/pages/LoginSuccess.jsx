@@ -10,6 +10,10 @@ const LoginSuccess = () => {
     navigate("/");
   };
 
+  const GoProductLists = () => {
+    navigate("/all-products");
+  };
+
   return (
     <VStack
       display="flex"
@@ -19,6 +23,10 @@ const LoginSuccess = () => {
       spacing="20px"
     >
       <Text color="black">Login/Sign Up Successful</Text>
+      <Button colorScheme="blue" onClick={GoProductLists}>
+        Go Shopping!
+      </Button>
+
       <Button colorScheme="red" onClick={handleLogout}>
         Logout
       </Button>
