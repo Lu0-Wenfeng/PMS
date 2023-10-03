@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from "axios";
 import { Box, Heading, Text } from '@chakra-ui/react';
 import { useParams } from 'react-router-dom'; // Import useParams
 
@@ -9,10 +10,10 @@ const ProductDetailPage = () => {
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
-        const response = await fetch(`/all-products/${productId}`);
-        if (response.ok) {
-          const productDetails = await response.json();
-          setProductDetails(productDetails);
+        const response = await axios.get(`http://localhost:3000/all-products/${productId}`);
+        if (response.status === 200) {
+          const productList = response.data;
+          setProductDetails(productList);
         } else {
           console.error('Failed to fetch product details');
         }

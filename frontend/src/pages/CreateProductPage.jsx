@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Heading,
@@ -7,8 +9,13 @@ import {
   Input,
   Button,
   VStack,
-  Textarea, // Import Textarea for product description
+  HStack,
+  Select,
+  Image,
+  Textarea,
 } from '@chakra-ui/react';
+
+
 
 const CreateProductPage = () => {
   const [productName, setProductName] = useState('');
@@ -17,7 +24,8 @@ const CreateProductPage = () => {
   const [productCategory, setProductCategory] = useState('');
   const [productinStockQuantity, setProductinStockQuantity] = useState(0);
   const [productImageUrl, setProductImageUrl] = useState('');
-
+  const navigate = useNavigate();
+  const [productCreated, setProductCreated] = useState(false);
 
   const handleCreateProduct = async () => {
     if (!productName || !productPrice || !productDescription || !productCategory || !productinStockQuantity) {
@@ -35,15 +43,13 @@ const CreateProductPage = () => {
     };
 
     try {
-      const response = await fetch('/create-product', {
-        method: 'POST',
+      const response = await axios.post('http://localhost:3000/create-product', newProduct, {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(newProduct),
       });
-
-      if (response.ok) {
+    
+      if (response.data) {
         // Product creation successful, handle subsequent logic
         console.log('Product created successfully');
         setProductName('');
@@ -52,22 +58,54 @@ const CreateProductPage = () => {
         setProductCategory('');
         setProductinStockQuantity(0);
         setProductImageUrl('');
+        setProductCreated(true);
+
+        // alert('Product has been created successfully.');
+        // navigate("/all-products");
       } else {
         // Product creation failed, handle error message
-        const errorMessage = await response.text();
-        console.error('Product creation failed:', errorMessage);
+        console.error('Product creation failed:', response.data);
       }
     } catch (error) {
-      console.error('Error during product creation:', error);
+      console.error('Error during product creation:', error.message);
     }
   };
 
+  useEffect(() => {
+    if (productCreated) {
+      // Perform side effects after the component re-renders
+      alert('Product has been created successfully.')
+      navigate('/all-products');
+      // Reset the flag
+      setProductCreated(false);
+    }
+  }, [productCreated, navigate]);
+
+  // const handleDrop = (event) => {
+  //   event.preventDefault();
+
+  //   const file = event.dataTransfer.files[0];
+  //   if (file) {
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => {
+  //       const imageUrl = reader.result;
+  //       setProductImageUrl(imageUrl);
+  //     };
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
+
+  // const handleDragOver = (event) => {
+  //   event.preventDefault();
+  // };
+
   return (
-    <Box p="4">
+    <Box p="4" mr="200" ml="200" maxW="600px" mx="auto">
       <Heading as="h1" mb="4">
-        Create Product Page
+        Create Product
       </Heading>
-      <VStack spacing="4">
+      <Box boxShadow='dark-lg' p='6' rounded='md' bg='white' >
+      <VStack spacing="4" >
         <FormControl>
           <FormLabel>Product Name</FormLabel>
           <Input
@@ -75,16 +113,6 @@ const CreateProductPage = () => {
             value={productName}
             onChange={(e) => setProductName(e.target.value)}
             placeholder="Enter product name"
-          />
-        </FormControl>
-
-        <FormControl>
-          <FormLabel>Product Price</FormLabel>
-          <Input
-            type="number"
-            value={productPrice}
-            onChange={(e) => setProductPrice(e.target.value)}
-            placeholder="Enter product price"
           />
         </FormControl>
 
@@ -97,17 +125,36 @@ const CreateProductPage = () => {
           />
         </FormControl>
 
+
+        <HStack spacing="20" align="stretch" justify="center">
         <FormControl>
-          <FormLabel>Product Category</FormLabel>
+          <FormLabel>Price</FormLabel>
           <Input
-            type="text"
-            value={productCategory}
-            onChange={(e) => setProductCategory(e.target.value)}
-            placeholder="Enter product category"
+            type="number"
+            value={productPrice}
+            onChange={(e) => setProductPrice(e.target.value)}
+            placeholder="Enter price"
           />
         </FormControl>
 
-        <FormControl>
+        <FormControl w="200%">
+          <FormLabel>Category</FormLabel>
+          <Select
+              value={productCategory}
+              onChange={(e) => setProductCategory(e.target.value)}
+              placeholder="Select product category"
+            >
+              <option value="electronics">Electronics</option>
+              <option value="clothing">Clothing</option>
+              <option value="books">Books</option>
+              {/* Add more categories as needed */}
+            </Select>
+        </FormControl>
+        </HStack>
+
+        <HStack spacing="20" align="stretch" justify="center">
+
+          <FormControl>
           <FormLabel>In Stock Quantity</FormLabel>
           <Input
             type="number"
@@ -115,10 +162,10 @@ const CreateProductPage = () => {
             onChange={(e) => setProductinStockQuantity(e.target.value)}
             placeholder="Enter in stock quantity"
           />
-        </FormControl>
+          </FormControl>
 
-        <FormControl>
-          <FormLabel>Product Image URL</FormLabel>
+        <FormControl w="200%">
+          <FormLabel>Add Image Link</FormLabel>
           <Input
             type="text"
             value={productImageUrl}
@@ -126,11 +173,34 @@ const CreateProductPage = () => {
             placeholder="Enter product image URL"
           />
         </FormControl>
+        </HStack>
+
+        {/* 这里或许可以添加一个Dropbox 直接拖动图片进去 但是我还没想好排版到哪里
+         <FormControl>
+        <Box
+              p="4"
+              border="2px"
+              borderColor="gray.200"
+              borderRadius="md"
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+        >
+
+          <Heading as="h3" size="sm" mb="2">
+            Drag and drop an image here
+          </Heading>
+        </Box>
+        </FormControl> */}
+
+        <Box p="4" border="2px" borderColor="gray.200" borderRadius="md">
+          <Image src={productImageUrl} alt="Product Preview" height="100px" maxW="100%" />
+        </Box>
 
         <Button colorScheme="blue" type="button" onClick={handleCreateProduct}>
           Create Product
         </Button>
       </VStack>
+      </Box>
     </Box>
   );
 };

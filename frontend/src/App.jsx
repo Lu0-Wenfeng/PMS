@@ -16,6 +16,8 @@ import ProductDetailPage from "./pages/ProductDetailPage";
 import store from "./store";
 import LoginSuccess from "./pages/LoginSuccess";
 
+
+
 function App() {
   const [searchInput, setSearchInput] = useState("");
 
