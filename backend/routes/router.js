@@ -5,8 +5,13 @@ const {
   signin: signIn,
   updatePassword,
 } = require("../controllers/auth");
-const { createProduct, getAllProducts, productDeatails } = require("../controllers/productControllers");
+const {
+  createProduct,
+  getAllProducts,
+  productDeatails,
+} = require("../controllers/productControllers");
 
+const errorHandler = require("../controllers/error");
 
 // Auth Flow
 router.post("/sign-up", signUp);
@@ -18,5 +23,8 @@ router.post("/update-pwd", updatePassword);
 router.post("/create-product", createProduct);
 router.get("/all-products", getAllProducts);
 router.get("/all-products/:id", productDeatails);
+
+// Error Handling
+router.get("/error", () => errorHandler);
 
 module.exports = router;
