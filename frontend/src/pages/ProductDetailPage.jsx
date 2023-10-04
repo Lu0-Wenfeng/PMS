@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
-import { Box, HStack, Heading, Text, Image, VStack } from '@chakra-ui/react';
+import { Box, HStack, Heading, Text, Image, VStack, Button } from '@chakra-ui/react';
 import { useParams } from 'react-router-dom';
 
+
 const ProductDetailPage = () => {
-  const [productDetails, setProductDetails] = useState({inStockQuantity: 0 }); 
+  const [productDetails, setProductDetails] = useState({}); 
   // const params = useParams();
   const {id} = useParams();
 
@@ -31,38 +32,55 @@ const ProductDetailPage = () => {
   return (
     <Box p="4">
       <Heading as="h1" mb="4">
-        Product Detail Page
+        Product Details
       </Heading>
-      <Box>
-        <HStack>
-          <Image src={productDetails.productImageUrl} alt={productDetails.name} width="400px" height="300px" />
+    <Box>
+    <HStack alignItems="flex-start">
+      <Image src={productDetails.productImageUrl} alt={productDetails.name} width="600px" height="500px" />
 
-          <VStack>
-            <Text fontWeight="thin">
-              Category: {productDetails.category}
-            </Text>
+      <VStack p='10' alignItems="flex-start">
+        <Text fontWeight="thin" fontSize='lg' ml={0}>
+          {productDetails.category}
+        </Text>
 
-            <Text fontWeight="bold">
-              Name: {productDetails.name}
-            </Text>
+        <Text fontWeight="normal" fontSize='4xl' textColor={'gray'}>
+          {productDetails.name}
+        </Text>
 
-            <HStack>
-              <Text>
-                <strong>Price:</strong> ${productDetails.price}
-              </Text>
+        <HStack p='5' spacing='10' alignSelf="flex-start">
+          <Text fontSize='4xl'>
+            <strong>${productDetails.price}</strong>
+          </Text>
 
-              <Text style={{ color: productDetails.inStockQuantity > 0 ? 'black' : 'red' }}>
-                <strong>{productDetails.inStockQuantity > 0 ? `In Stock Quantity: ${productDetails.inStockQuantity}` : 'Out Of Stock'}</strong>
-              </Text>
-            </HStack>
-
-            <Text fontWeight={"normal"}>
-              Description: {productDetails.description}
-            </Text>
-          </VStack>
+          <Text fontSize='xs'
+            color={productDetails.inStockQuantity > 0 ? 'black' : 'orange'}
+            border="1px solid #000"
+            background={'tomato'}
+            borderRadius="8px"
+            padding="5px">
+            {productDetails.inStockQuantity > 0 ? `In Stock : ${productDetails.inStockQuantity}` : 'Out Of Stock'}
+          </Text>
         </HStack>
-      </Box>
-    </Box>
+
+        <Text fontWeight={"normal"}>
+          {productDetails.description}
+        </Text>
+
+        <HStack>
+          <Button colorScheme={'blue'}>
+            Add to cart
+          </Button>
+
+          <Button colorScheme={'gray'}>
+            Edit
+          </Button>
+        </HStack>
+        
+      </VStack>
+    </HStack>
+  </Box>
+</Box>
+
   );
 };
 

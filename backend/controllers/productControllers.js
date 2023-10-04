@@ -36,8 +36,8 @@ exports.createProduct = async (req, res) => {
 exports.productDeatails = async (req, res) => {
   try {
     // product name should be passed in
-    const { productId } = req.params;
-    const product = await Product.findById(productId);
+    const { id } = req.params;
+    const product = await Product.findById(id);
 
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
@@ -46,6 +46,9 @@ exports.productDeatails = async (req, res) => {
       name: product.name,
       category: product.category,
       inStockQuantity: product.inStockQuantity,
+      price: product.price,
+      productImageUrl: product.productImageUrl,
+      description: product.description,
     };
 
     res.status(200).json(productDetails);
