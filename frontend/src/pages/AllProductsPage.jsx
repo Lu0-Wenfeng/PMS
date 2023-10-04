@@ -1,6 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Box, Heading, Flex, Image, Text, Button, Link, Select } from '@chakra-ui/react';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import {
+  Box,
+  Heading,
+  Flex,
+  Image,
+  Text,
+  Button,
+  Link,
+  Select,
+} from "@chakra-ui/react";
 
 const ITEMS_PER_PAGE = 10;
 // const PRODUCTS_PER_ROW = 5;
@@ -8,20 +17,27 @@ const ITEMS_PER_PAGE = 10;
 const AllProductsPage = () => {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortOption, setSortOption] = useState('lastAdded');
+  const [sortOption, setSortOption] = useState("lastAdded");
+
+  const selectStyles = {
+    
+    variant: "outline",
+    border: "1px solid",
+    borderColor: "gray.300",
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/all-products');
+        const response = await axios.get("http://localhost:3000/all-products");
         if (response.status === 200) {
           const productList = response.data;
           setProducts(productList);
         } else {
-          console.error('Failed to fetch product list');
+          console.error("Failed to fetch product list");
         }
       } catch (error) {
-        console.error('Error during product list fetch:', error);
+        console.error("Error during product list fetch:", error);
       }
     };
 
@@ -30,9 +46,9 @@ const AllProductsPage = () => {
 
   useEffect(() => {
     // last added目前没有功能 因为我们需要在后端给商品增加added time这个属性
-    if (sortOption === 'priceHighToLow') {
+    if (sortOption === "priceHighToLow") {
       setProducts([...products].sort((a, b) => b.price - a.price));
-    } else if (sortOption === 'priceLowToHigh') {
+    } else if (sortOption === "priceLowToHigh") {
       setProducts([...products].sort((a, b) => a.price - b.price));
     }
   }, [sortOption]);
@@ -59,7 +75,7 @@ const AllProductsPage = () => {
       pageButtons.push(
         <Button
           key={i}
-          variant={i === currentPage ? 'solid' : 'outline'}
+          variant={i === currentPage ? "solid" : "outline"}
           size="sm"
           onClick={() => handlePageChange(i)}
           ml="2"
@@ -73,16 +89,17 @@ const AllProductsPage = () => {
   };
 
   return (
-    <Box p="4">
+    <Box p="4" textColor="black">
       <Flex justifyContent="space-between" alignItems="center" mb="4">
         <Heading as="h1">Products List Page</Heading>
         <Flex>
-        <Select
+          <Select
             variant="outline"
             size="sm"
             onChange={(e) => handleSortChange(e.target.value)}
             value={sortOption}
             mr="2"
+            {...selectStyles}
           >
             <option value="lastAdded">Last Added</option>
             <option value="priceHighToLow">Price High to Low</option>
@@ -102,7 +119,11 @@ const AllProductsPage = () => {
         <>
           <Flex flexWrap="wrap">
             {currentProducts.map((product) => (
-              <Box key={product.id} width={{ base: '100%', md: '50%', lg: '20%' }} p="2">
+              <Box
+                key={product.id}
+                width={{ base: "100%", md: "50%", lg: "20%" }}
+                p="2"
+              >
                 <Image
                   src={product.productImageUrl}
                   alt={product.name}
@@ -117,7 +138,12 @@ const AllProductsPage = () => {
               </Box>
             ))}
           </Flex>
-          <Box mt="4" display="flex" justifyContent="center" alignItems="center">
+          <Box
+            mt="4"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+          >
             {/* <Text>
               Page {currentPage} of {totalPages}
             </Text> */}
@@ -132,7 +158,7 @@ const AllProductsPage = () => {
             </Button>
 
             {renderPageButtons()}
-            
+
             <Button
               variant="outline"
               size="sm"
@@ -143,9 +169,7 @@ const AllProductsPage = () => {
               »
             </Button>
           </Box>
-          <Box mt="4" display="flex" justifyContent="flex-end">
-            
-          </Box>
+          <Box mt="4" display="flex" justifyContent="flex-end"></Box>
         </>
       )}
     </Box>
@@ -153,4 +177,3 @@ const AllProductsPage = () => {
 };
 
 export default AllProductsPage;
-
