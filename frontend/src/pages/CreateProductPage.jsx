@@ -147,6 +147,7 @@ const CreateProductPage = () => {
               <option value="electronics">Electronics</option>
               <option value="clothing">Clothing</option>
               <option value="books">Books</option>
+              <option value="food">Food</option>
               {/* Add more categories as needed */}
             </Select>
         </FormControl>
