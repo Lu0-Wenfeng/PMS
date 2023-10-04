@@ -1,4 +1,4 @@
-Product = require("../models/product");
+const Product = require("../models/product");
 
 exports.createProduct = async (req, res) => {
   try {
@@ -50,13 +50,13 @@ exports.productDeatails = async (req, res) => {
 
     res.status(200).json(productDetails);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: "Server error", error });
   }
 };
 
 exports.getAllProducts = async (req, res) => {
   try {
-    const allProducts = await Product.find();
+    const allProducts = await Product.find().sort({ createdAt: -1 });
     res.status(200).json(allProducts);
   } catch (error) {
     res.status(500).json({ message: "Server error", error });

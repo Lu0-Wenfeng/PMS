@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback  } from "react";
 import axios from "axios";
 import {
   Box,
@@ -7,9 +7,11 @@ import {
   Image,
   Text,
   Button,
-  Link,
+  Link as ChakraLink,
   Select,
+  HStack,
 } from "@chakra-ui/react";
+import { Link as RouterLink } from "react-router-dom";
 
 const ITEMS_PER_PAGE = 10;
 // const PRODUCTS_PER_ROW = 5;
@@ -41,16 +43,26 @@ const AllProductsPage = () => {
       }
     };
 
-    fetchProducts();
-  }, []);
+    //确保组件未挂载时才调用 setProducts
+    if (products.length === 0) {
+      fetchProducts();
+    }
+  }, [products]);
 
   useEffect(() => {
-    // last added目前没有功能 因为我们需要在后端给商品增加added time这个属性
-    if (sortOption === "priceHighToLow") {
-      setProducts([...products].sort((a, b) => b.price - a.price));
-    } else if (sortOption === "priceLowToHigh") {
-      setProducts([...products].sort((a, b) => a.price - b.price));
-    }
+    const sortProducts = () => {
+      if (sortOption === "priceHighToLow") {
+        setProducts((prevProducts) => [...prevProducts].sort((a, b) => b.price - a.price));
+      } else if (sortOption === "priceLowToHigh") {
+        setProducts((prevProducts) => [...prevProducts].sort((a, b) => a.price - b.price));
+      } else if (sortOption === "lastAdded") {
+        setProducts((prevProducts) =>
+          [...prevProducts].sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+        );
+      }
+    };
+
+    sortProducts();
   }, [sortOption]);
 
   const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
@@ -58,13 +70,13 @@ const AllProductsPage = () => {
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const currentProducts = products.slice(startIndex, endIndex);
 
-  const handlePageChange = (newPage) => {
+  const handlePageChange = useCallback((newPage) => {
     setCurrentPage(newPage);
-  };
+  },[]);
 
-  const handleSortChange = (option) => {
+  const handleSortChange = useCallback((option) => {
     setSortOption(option);
-  };
+  },[]);
 
   const renderPageButtons = () => {
     const pageButtons = [];
@@ -105,11 +117,11 @@ const AllProductsPage = () => {
             <option value="priceHighToLow">Price High to Low</option>
             <option value="priceLowToHigh">Price Low to High</option>
           </Select>
-          <Link href="/create-product">
-            <Button colorScheme="teal" size="sm">
+          <ChakraLink href="/create-product">
+            <Button colorScheme="teal" size="sm" bg={"purple"}>
               Add Product
             </Button>
-          </Link>
+          </ChakraLink>
         </Flex>
       </Flex>
 
@@ -119,22 +131,30 @@ const AllProductsPage = () => {
         <>
           <Flex flexWrap="wrap">
             {currentProducts.map((product) => (
+              
               <Box
                 key={product.id}
                 width={{ base: "100%", md: "50%", lg: "20%" }}
                 p="2"
               >
+                <ChakraLink key={product._id} href={`./all-products/${product._id}`}>
                 <Image
                   src={product.productImageUrl}
                   alt={product.name}
-                  width="90%"
-                  height="auto"
-                  maxH="250px"
+                  width="230px"
+                  height="190px"
                 />
-                <Text mt="2" fontWeight="bold">
+                <Text mt="2" fontWeight="medium" color={"gray"}>
                   {product.name}
                 </Text>
-                <Text>${product.price}</Text>
+                <Text><strong>${product.price}</strong></Text>
+                </ChakraLink>
+
+                <HStack>
+                  <Button bg={"purple"}>这里放数量</Button>
+                  <Button>Edit</Button>
+
+                </HStack>
               </Box>
             ))}
           </Flex>

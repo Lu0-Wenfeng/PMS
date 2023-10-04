@@ -10,7 +10,6 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-	// TODO: Categroty
 	category: {
     type: String,
     required: true,
@@ -26,7 +25,9 @@ const productSchema = new mongoose.Schema({
 	productImageUrl: {
     type: String
   },
-});
+},
+{ timestamps: true }
+);
 
 
 const Product = mongoose.model('Product', productSchema);

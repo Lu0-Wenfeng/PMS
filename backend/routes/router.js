@@ -19,4 +19,7 @@ router.post("/create-product", createProduct);
 router.get("/all-products", getAllProducts);
 router.get("/all-products/:id", productDeatails);
 
+// Error Handling
+router.get("/error", () => errorHandler);
+
 module.exports = router;
