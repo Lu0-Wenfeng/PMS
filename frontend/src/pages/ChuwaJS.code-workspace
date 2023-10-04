@@ -1,14 +1,6 @@
 {
 	"folders": [
 		{
-			"path": "../../../../ChuwaJS"
-		},
-		{
-			"name": "fullstack-training-0807",
-			"path": "../../../../fullstack-training-0807"
-		},
-		{
-			"name": "PMS",
 			"path": "../../.."
 		}
 	],
