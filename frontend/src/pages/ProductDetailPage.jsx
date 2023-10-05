@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import { Box, HStack, Heading, Text, Image, VStack, Button } from '@chakra-ui/react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 
 const ProductDetailPage = () => {
   const [productDetails, setProductDetails] = useState({}); 
   // const params = useParams();
   const {id} = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -30,10 +31,11 @@ const ProductDetailPage = () => {
   }, [id]);
 
   return (
-    <Box p="4">
+    <Box p="4" textColor="black">
       <Heading as="h1" mb="4">
         Product Details
       </Heading>
+      <Button colorScheme='yellow' onClick={() => navigate(-1)} mb="4">Go Back</Button>
     <Box>
     <HStack alignItems="flex-start">
       <Image src={productDetails.productImageUrl} alt={productDetails.name} width="600px" height="500px" />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback  } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import {
   Box,
@@ -22,10 +22,18 @@ const AllProductsPage = () => {
   const [sortOption, setSortOption] = useState("lastAdded");
 
   const selectStyles = {
-    
     variant: "outline",
     border: "1px solid",
     borderColor: "gray.300",
+  };
+
+  const buttonStyles = {
+    my: "2",
+    bg: "#5048E5",
+    textColor: "white",
+    _hover: {
+      bg: "rgba(80, 72, 229, 0.9)",
+    },
   };
 
   useEffect(() => {
@@ -33,7 +41,7 @@ const AllProductsPage = () => {
       try {
         const response = await axios.get("http://localhost:3000/all-products");
         if (response.status === 200) {
-          const productList = response.data;
+          const productList = response.data.allProducts;
           setProducts(productList);
         } else {
           console.error("Failed to fetch product list");
@@ -52,12 +60,18 @@ const AllProductsPage = () => {
   useEffect(() => {
     const sortProducts = () => {
       if (sortOption === "priceHighToLow") {
-        setProducts((prevProducts) => [...prevProducts].sort((a, b) => b.price - a.price));
+        setProducts((prevProducts) =>
+          [...prevProducts].sort((a, b) => b.price - a.price)
+        );
       } else if (sortOption === "priceLowToHigh") {
-        setProducts((prevProducts) => [...prevProducts].sort((a, b) => a.price - b.price));
+        setProducts((prevProducts) =>
+          [...prevProducts].sort((a, b) => a.price - b.price)
+        );
       } else if (sortOption === "lastAdded") {
         setProducts((prevProducts) =>
-          [...prevProducts].sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+          [...prevProducts].sort(
+            (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
+          )
         );
       }
     };
@@ -72,11 +86,11 @@ const AllProductsPage = () => {
 
   const handlePageChange = useCallback((newPage) => {
     setCurrentPage(newPage);
-  },[]);
+  }, []);
 
   const handleSortChange = useCallback((option) => {
     setSortOption(option);
-  },[]);
+  }, []);
 
   const renderPageButtons = () => {
     const pageButtons = [];
@@ -91,6 +105,7 @@ const AllProductsPage = () => {
           size="sm"
           onClick={() => handlePageChange(i)}
           ml="2"
+          {...buttonStyles}
         >
           {i}
         </Button>
@@ -118,7 +133,7 @@ const AllProductsPage = () => {
             <option value="priceLowToHigh">Price Low to High</option>
           </Select>
           <ChakraLink href="/create-product">
-            <Button colorScheme="teal" size="sm" bg={"purple"}>
+            <Button colorScheme="teal" size="sm" bg={"green"}>
               Add Product
             </Button>
           </ChakraLink>
@@ -131,29 +146,32 @@ const AllProductsPage = () => {
         <>
           <Flex flexWrap="wrap">
             {currentProducts.map((product) => (
-              
               <Box
                 key={product.id}
                 width={{ base: "100%", md: "50%", lg: "20%" }}
                 p="2"
               >
-                <ChakraLink key={product._id} href={`./all-products/${product._id}`}>
-                <Image
-                  src={product.productImageUrl}
-                  alt={product.name}
-                  width="230px"
-                  height="190px"
-                />
-                <Text mt="2" fontWeight="medium" color={"gray"}>
-                  {product.name}
-                </Text>
-                <Text><strong>${product.price}</strong></Text>
+                <ChakraLink
+                  key={product._id}
+                  href={`./all-products/${product._id}`}
+                >
+                  <Image
+                    src={product.productImageUrl}
+                    alt={product.name}
+                    width="230px"
+                    height="190px"
+                  />
+                  <Text mt="2" fontWeight="medium" color={"gray"}>
+                    {product.name}
+                  </Text>
+                  <Text>
+                    <strong>${product.price}</strong>
+                  </Text>
                 </ChakraLink>
 
                 <HStack>
-                  <Button bg={"purple"}>这里放数量</Button>
+                  <Button {...buttonStyles}>这里放数量</Button>
                   <Button>Edit</Button>
-
                 </HStack>
               </Box>
             ))}
@@ -173,6 +191,7 @@ const AllProductsPage = () => {
               onClick={() => handlePageChange(currentPage - 1)}
               isDisabled={currentPage === 1}
               ml="2"
+              {...buttonStyles}
             >
               «
             </Button>
@@ -185,6 +204,7 @@ const AllProductsPage = () => {
               onClick={() => handlePageChange(currentPage + 1)}
               isDisabled={currentPage === totalPages}
               ml="2"
+              {...buttonStyles}
             >
               »
             </Button>
@@ -196,4 +216,4 @@ const AllProductsPage = () => {
   );
 };
 
-export default AllProductsPage;
+export default AllProductsPage

@@ -5,9 +5,8 @@ const {
   signin: signIn,
   updatePassword,
 } = require("../controllers/auth");
-const { createProduct, getAllProducts, productDeatails, editProduct, deleteProduct } = require("../controllers/productControllers");
-const {authenticateUser} = require('../middlewares/authenticateUser');
-const {myCart, addToCart, deleteProduct, updateCartItemQuantity } = requrie('../controllers/cartControllers')
+const { createProduct, getAllProducts, productDeatails, editProduct } = require("../controllers/productControllers");
+
 
 // Auth Flow
 router.post("/sign-up", signUp);
@@ -16,17 +15,11 @@ router.post("/sign-in", signIn);
 router.post("/update-pwd", updatePassword);
 
 // Product Flow
-router.post("/create-product", authenticateUser, createProduct);
-router.get("/all-products", authenticateUser, getAllProducts);
+router.post("/create-product", createProduct);
+router.get("/all-products", getAllProducts);
 router.get("/all-products/:id", productDeatails);
-router.put("/edit-product/:id", authenticateUser, editProduct);
-router.delete('./delete-product/:id', authenticateUser, deleteProduct);
+router.put("/edit-product/:id", editProduct);
 
-// Cart Flow
-router.get("./cart", authenticateUser, myCart);
-router.post("./all-products/add-product/:productId", authenticateUser, addToCart)
-router.delete('./cart/delete/:productId', authenticateUser, deleteProduct);
-router.put('./cart/update-quantity/:productId', authenticateUser, updateCartItemQuantity )
 
 // Error Handling
 router.get("/error", () => errorHandler);
