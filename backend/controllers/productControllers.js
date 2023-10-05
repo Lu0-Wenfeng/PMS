@@ -2,6 +2,13 @@ const Product = require("../models/product");
 
 exports.createProduct = async (req, res) => {
   try {
+    // Check if the user is an admin
+    if (req.userData.userType !== 'admin') {
+      return res.status(403).json({
+        message: 'Permission denied. Only admins can create products.',
+      });
+    }
+
     const {
       name,
       description,
@@ -59,9 +66,78 @@ exports.productDeatails = async (req, res) => {
 
 exports.getAllProducts = async (req, res) => {
   try {
+    const userData = req.userData;
     const allProducts = await Product.find().sort({ createdAt: -1 });
-    res.status(200).json(allProducts);
+    res.status(200).json({
+      userData,
+      allProducts
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
+  }
+};
+
+exports.editProduct = async (req, res) => {
+  try {
+    // Check if the user is an admin
+    if (req.userData.userType !== 'admin') {
+      return res.status(403).json({
+        message: 'Permission denied. Only admins can create products.',
+      });
+    }
+
+    const { id } = req.params;
+    const {
+      name,
+      description,
+      category,
+      price,
+      inStockQuantity,
+      productImageUrl,
+    } = req.body;
+
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // Update product details
+    product.name = name;
+    product.description = description;
+    product.category = category;
+    product.price = price;
+    product.inStockQuantity = inStockQuantity;
+    product.productImageUrl = productImageUrl;
+
+    await product.save();
+
+    res.status(200).json({ message: "Product updated successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.deleteProduct = async (req, res) => {
+  try {
+    // Check if the user is an admin
+    if (req.userData.userType !== 'admin') {
+      return res.status(403).json({
+        message: 'Permission denied. Only admins can create products.',
+      });
+    }
+
+    const { id } = req.params;
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    await product.remove();
+
+    res.status(200).json({ message: "Product deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
   }
 };

@@ -4,8 +4,7 @@ User = require("../models/user");
 Product = require("../models/product");
 cart = require("../models/cart");
 
-// Whether we should get a secret key ('your_secret_key_here')
-// for JWT token signing.
+
 exports.signup = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -27,7 +26,7 @@ exports.signup = async (req, res) => {
     });
 
     await newUser.save();
-
+    
     res.status(201).json({ message: "Signup successful" });
   } catch (error) {
     console.error(error);
