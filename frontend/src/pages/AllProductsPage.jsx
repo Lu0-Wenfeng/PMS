@@ -168,11 +168,12 @@ const AllProductsPage = () => {
                     <strong>${product.price}</strong>
                   </Text>
                 </ChakraLink>
-
-                <HStack>
+                
+                {/* 这里应该是Admin才能看见的功能 */}
+                {/* <HStack>
                   <Button {...buttonStyles}>这里放数量</Button>
-                  <Button>Edit</Button>
-                </HStack>
+                  <Button {...buttonStyles}>Edit</Button>
+                </HStack> */}
               </Box>
             ))}
           </Flex>
