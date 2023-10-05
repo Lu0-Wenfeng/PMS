@@ -53,7 +53,7 @@ const ProductDetailPage = () => {
           </Text>
 
           <Text fontSize='xs'
-            color={productDetails.inStockQuantity > 0 ? 'black' : 'orange'}
+            color={productDetails.inStockQuantity > 0 ? 'black' : 'deepred'}
             border="1px solid #000"
             background={'tomato'}
             borderRadius="8px"
