@@ -25,7 +25,7 @@ router.delete('./delete-product/:id', authenticateUser, deleteProduct);
 // Cart Flow
 router.get("./cart", authenticateUser, myCart);
 router.post("./all-products/add-product/:productId", authenticateUser, addToCart)
-router.delete('./cart/delete/:userId', authenticateUser, deleteProduct);
+router.delete('./cart/delete/:productId', authenticateUser, deleteProduct);
 router.put('./cart/update-quantity/:productId', authenticateUser, updateCartItemQuantity )
 
 // Error Handling
