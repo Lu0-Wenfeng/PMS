@@ -1,6 +1,6 @@
 const Product = require("../models/product");
 const User = require('../models/user')
-const Cart = requrie("../models/cart");
+const Cart = require("../models/cart");
 
 exports.myCart = async (req, res) => {
     try {
@@ -78,7 +78,7 @@ exports.addToCart = async (req, res) => {
 
 };
 
-exports.deleteProduct = async (req,res) => {
+exports.deleteProductfromCart = async (req,res) => {
     const { productId } = req.params;
     const userId  = req.userData.userId;
     try {

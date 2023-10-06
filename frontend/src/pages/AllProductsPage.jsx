@@ -7,11 +7,11 @@ import {
   Image,
   Text,
   Button,
-  Link as ChakraLink,
+  Link,
   Select,
   HStack,
 } from "@chakra-ui/react";
-import { Link as RouterLink } from "react-router-dom";
+
 
 const ITEMS_PER_PAGE = 10;
 // const PRODUCTS_PER_ROW = 5;
@@ -33,7 +33,7 @@ const AllProductsPage = () => {
       try {
         const response = await axios.get("http://localhost:3000/all-products");
         if (response.status === 200) {
-          const productList = response.data;
+          const productList = response.data.allProducts;
           setProducts(productList);
         } else {
           console.error("Failed to fetch product list");
@@ -117,11 +117,11 @@ const AllProductsPage = () => {
             <option value="priceHighToLow">Price High to Low</option>
             <option value="priceLowToHigh">Price Low to High</option>
           </Select>
-          <ChakraLink href="/create-product">
+          <Link href="/create-product">
             <Button colorScheme="teal" size="sm" bg={"purple"}>
               Add Product
             </Button>
-          </ChakraLink>
+          </Link>
         </Flex>
       </Flex>
 
@@ -137,7 +137,7 @@ const AllProductsPage = () => {
                 width={{ base: "100%", md: "50%", lg: "20%" }}
                 p="2"
               >
-                <ChakraLink key={product._id} href={`./all-products/${product._id}`}>
+                <Link key={product._id} href={`./all-products/${product._id}`}>
                 <Image
                   src={product.productImageUrl}
                   alt={product.name}
@@ -148,12 +148,14 @@ const AllProductsPage = () => {
                   {product.name}
                 </Text>
                 <Text><strong>${product.price}</strong></Text>
-                </ChakraLink>
+                </Link>
 
                 <HStack>
                   <Button bg={"purple"}>这里放数量</Button>
-                  <Button>Edit</Button>
-
+                  <Link href={`/edit-product/${product._id}`}>
+                    <Button>Edit</Button>
+                  </Link>
+                  
                 </HStack>
               </Box>
             ))}

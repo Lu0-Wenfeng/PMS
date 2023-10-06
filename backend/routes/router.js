@@ -7,7 +7,7 @@ const {
 } = require("../controllers/auth");
 const { createProduct, getAllProducts, productDeatails, editProduct, deleteProduct } = require("../controllers/productControllers");
 const {authenticateUser} = require('../middlewares/authenticateUser');
-const {myCart, addToCart, deleteProduct, updateCartItemQuantity } = requrie('../controllers/cartControllers')
+const {myCart, addToCart, deleteProductfromCart, updateCartItemQuantity } = require('../controllers/cartControllers')
 
 // Auth Flow
 router.post("/sign-up", signUp);
@@ -25,7 +25,7 @@ router.delete('./delete-product/:id', authenticateUser, deleteProduct);
 // Cart Flow
 router.get("./cart", authenticateUser, myCart);
 router.post("./all-products/add-product/:productId", authenticateUser, addToCart)
-router.delete('./cart/delete/:productId', authenticateUser, deleteProduct);
+router.delete('./cart/delete/:productId', authenticateUser, deleteProductfromCart);
 router.put('./cart/update-quantity/:productId', authenticateUser, updateCartItemQuantity )
 
 // Error Handling
