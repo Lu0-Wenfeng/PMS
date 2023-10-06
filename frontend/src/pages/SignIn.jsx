@@ -1,5 +1,3 @@
-import React from "react";
-import axios from "axios";
 import {
   Box,
   Button,
@@ -9,9 +7,12 @@ import {
   Link,
   Text,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MyCard from "../components/MyCard";
+import { userLoggedIn } from "../services/authSlice";
 
 const SignIn = () => {
   const [show, setShow] = useState(false);
@@ -20,6 +21,7 @@ const SignIn = () => {
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const inputStyles = {
     mt: "2",
@@ -94,6 +96,7 @@ const SignIn = () => {
       });
       if (response.data && response.data.token) {
         localStorage.setItem("token", response.data.token);
+        dispatch(userLoggedIn(response.data));
         alert("Login Successful");
         navigate("/success");
       }
@@ -134,6 +137,7 @@ const SignIn = () => {
             type="email"
             value={email}
             onChange={onEmailChange}
+            onKeyDown={handleKeyDown}
             onBlur={onEmailBlur}
             placeholder="Enter your email"
             {...inputStyles}
@@ -152,6 +156,7 @@ const SignIn = () => {
               type={show ? "text" : "password"}
               value={password}
               onChange={onPasswordChange}
+              onKeyDown={handleKeyDown}
               onBlur={onPasswordBlur}
               placeholder="Enter your password"
               {...inputStyles}

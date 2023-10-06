@@ -3,7 +3,6 @@ import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 
-
 import Footer from "./components/Layout/Footer";
 import Header from "./components/Layout/Header";
 import Home from "./pages/Home";
@@ -15,10 +14,7 @@ import CreateProductPage from "./pages/CreateProductPage";
 import AllProductsPage from "./pages/AllProductsPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 
-import store from "./store";
-
-
-
+import store from "./app/store";
 
 function App() {
   const [searchInput, setSearchInput] = useState("");
@@ -43,9 +39,9 @@ function App() {
               <Route path="/sign-up" element={<SignUp />} />
               <Route path="/update-pwd" element={<UpdatePassword />} />
               <Route path="/success" element={<LoginSuccess />} />
-              <Route path='/create-product' element={<CreateProductPage />} />
-              <Route path='/all-products' element={<AllProductsPage />} />
-              <Route path='/all-products/:id' element={<ProductDetailPage />} />
+              <Route path="/create-product" element={<CreateProductPage />} />
+              <Route path="/all-products" element={<AllProductsPage />} />
+              <Route path="/all-products/:id" element={<ProductDetailPage />} />
             </Routes>
           </GridItem>
           <GridItem bg="#111827" area={"footer"}>
