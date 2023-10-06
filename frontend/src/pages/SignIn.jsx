@@ -7,17 +7,16 @@ import {
   Link,
   Text,
 } from "@chakra-ui/react";
-import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import MyCard from "../components/MyCard";
 import {
-  userLoggedIn,
   setEmail,
   setEmailError,
   setPassword,
   setPasswordError,
+  userSignIn
 } from "../store/authSlice";
 
 const SignIn = () => {
@@ -56,13 +55,13 @@ const SignIn = () => {
 
   const onEmailBlur = () => {
     if (!email) {
-      setEmailError("This field is required");
+      dispatch(setEmailError("This field is required"));
     }
   };
 
   const onPasswordBlur = () => {
     if (!password) {
-      setPasswordError("This field is required");
+      dispatch(setPasswordError("This field is required"));
     }
   };
 
@@ -97,35 +96,11 @@ const SignIn = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:3000/sign-in", {
-        email: email,
-        password: password,
-      });
-      if (response.data && response.data.token) {
-        localStorage.setItem("token", response.data.token);
-        dispatch(userLoggedIn(response.data));
-        alert("Login Successful");
-        navigate("/success");
-      }
+      await dispatch(userSignIn({ email, password })).unwrap();
+      alert("Login Successful");
+      navigate("/success");
     } catch (error) {
-      if (error.response && error.response.data) {
-        console.error("Error loggin in:", error.response.data);
-        if (error.response.data.message === "User Not exist") {
-          dispatch(setEmailError("User Not Exists"));
-          console.error(
-            "(If-Else)Error logging in:",
-            error.response.data.message
-          );
-        } else if (error.response.data.message === "Incorrect Password") {
-          dispatch(setPasswordError("Incorrect Password"));
-          console.error(
-            "(If-Else)Error logging in:",
-            error.response.data.message
-          );
-        }
-      } else {
-        console.error("Error loggin in:", error);
-      }
+      console.error("Error logging in", error.message);
     }
   };
 
@@ -199,7 +174,7 @@ const SignIn = () => {
             </Link>
           </Text>
           <Text>
-            <Link href="update-password" color="blue.500">
+            <Link href="/update-pwd" color="blue.500">
               Forgot your password?
             </Link>
           </Text>

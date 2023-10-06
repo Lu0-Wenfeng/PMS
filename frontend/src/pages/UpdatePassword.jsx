@@ -3,10 +3,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import MyCard from "../components/MyCard";
-import {
-  setEmail,
-  setEmailError,
-} from "../store/authSlice";
+import { setEmail, setEmailError } from "../store/authSlice";
 
 const UpdatePassword = () => {
   const navigate = useNavigate();
@@ -38,6 +35,12 @@ const UpdatePassword = () => {
     },
   };
 
+  const onEmailBlur = () => {
+    if (!email) {
+      dispatch(setEmailError("This field is required"));
+    }
+  };
+
   const onEmailChange = (e) => {
     dispatch(setEmail(e.target.value));
     if (!e.target.value) {
@@ -46,6 +49,12 @@ const UpdatePassword = () => {
       dispatch(setEmailError("Invalid Email format"));
     } else {
       dispatch(setEmailError(""));
+    }
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      alert("Under development!");
     }
   };
 
@@ -63,6 +72,8 @@ const UpdatePassword = () => {
             type="email"
             value={email}
             onChange={onEmailChange}
+            onKeyDown={handleKeyDown}
+            onBlur={onEmailBlur}
             placeholder="Enter your email"
             {...inputStyles}
             borderColor={emailError ? "red.500" : "gray.300"}

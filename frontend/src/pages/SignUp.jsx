@@ -1,5 +1,3 @@
-import React from "react";
-import axios from "axios";
 import {
   Box,
   Button,
@@ -9,7 +7,7 @@ import {
   Link,
   Text,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import MyCard from "../components/MyCard";
@@ -18,6 +16,7 @@ import {
   setEmailError,
   setPassword,
   setPasswordError,
+  userSignUp,
 } from "../store/authSlice";
 
 const SignUp = () => {
@@ -54,6 +53,19 @@ const SignUp = () => {
   };
 
   const handleClick = () => setShow(!show);
+
+  const onEmailBlur = () => {
+    if (!email) {
+      dispatch(setEmailError("This field is required"));
+    }
+  };
+
+  const onPasswordBlur = () => {
+    if (!password) {
+      dispatch(setPasswordError("This field is required"));
+    }
+  };
+
   const onEmailChange = (e) => {
     dispatch(setEmail(e.target.value));
     if (!e.target.value) {
@@ -76,25 +88,20 @@ const SignUp = () => {
 
   const handleSignUp = async () => {
     try {
-      const response = await axios.post("http://localhost:3000/sign-up", {
-        email: email,
-        password: password,
-      });
-      if (response.data) {
-        alert("Signed Up Successfully");
-        navigate("/success");
-      }
+      await dispatch(userSignUp({ email, password })).unwrap();
+      alert("Signed Up Successfully");
+      navigate("/success");
     } catch (error) {
-      if (error.response && error.response.data) {
-        console.error("Error loggin in:", error.response.data.message);
-        if (error.response.data.message === "Username already exists") {
-          dispatch(setEmailError("Username already exists"));
-        }
-      } else {
-        console.error("Error loggin in:", error);
-      }
+      console.error("Error signing up", error.message);
     }
   };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleSignUp();
+    }
+  };
+
   return (
     <Box display="flex" justifyContent="center" alignItems="center" h="100%">
       <MyCard title="Sign Up an account">
@@ -104,6 +111,8 @@ const SignUp = () => {
             type="email"
             value={email}
             onChange={onEmailChange}
+            onBlur={onEmailBlur}
+            onKeyDown={handleKeyDown}
             placeholder="Enter your email"
             {...inputStyles}
             borderColor={emailError ? "red.500" : "gray.300"}
@@ -121,6 +130,8 @@ const SignUp = () => {
               type={show ? "text" : "password"}
               value={password}
               onChange={onPasswordChange}
+              onBlur={onPasswordBlur}
+              onKeyDown={handleKeyDown}
               placeholder="Enter your password"
               {...inputStyles}
             />
