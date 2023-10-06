@@ -4,6 +4,7 @@ User = require("../models/user");
 Product = require("../models/product");
 cart = require("../models/cart");
 
+
 exports.signup = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -25,7 +26,7 @@ exports.signup = async (req, res) => {
     });
 
     await newUser.save();
-
+    
     res.status(201).json({ message: "Signup successful" });
   } catch (error) {
     console.error(error);
@@ -37,9 +38,7 @@ exports.signup = async (req, res) => {
 exports.signin = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("Request body:", req.body); // 查看完整的请求体内容
-    console.log("Email:", email);
-    console.log("Password:", password);
+    console.log(email, password);
 
     // Check if the user exists
     const user = await User.findOne({ email });

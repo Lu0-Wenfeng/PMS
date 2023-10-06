@@ -118,3 +118,26 @@ exports.editProduct = async (req, res) => {
   }
 };
 
+exports.deleteProduct = async (req, res) => {
+  try {
+    // Check if the user is an admin
+    if (req.userData.userType !== 'admin') {
+      return res.status(403).json({
+        message: 'Permission denied. Only admins can create products.',
+      });
+    }
+
+    const { id } = req.params;
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    await product.remove();
+
+    res.status(200).json({ message: "Product deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
