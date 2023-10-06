@@ -69,7 +69,9 @@ const UpdatePassword = () => {
           )}
         </Box>
 
-        <Button {...buttonStyles}>Update Your Password</Button>
+        <Button onClick={() => alert("Under development!")} {...buttonStyles}>
+          Update Your Password
+        </Button>
       </MyCard>
     </Box>
   );
