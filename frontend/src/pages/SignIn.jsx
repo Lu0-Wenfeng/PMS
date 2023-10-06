@@ -8,20 +8,27 @@ import {
   Text,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MyCard from "../components/MyCard";
-import { userLoggedIn } from "../services/authSlice";
+import {
+  userLoggedIn,
+  setEmail,
+  setEmailError,
+  setPassword,
+  setPasswordError,
+} from "../store/authSlice";
 
 const SignIn = () => {
   const [show, setShow] = useState(false);
-  const [email, setEmail] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordError, setPasswordError] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const email = useSelector((state) => state.auth.email);
+  const emailError = useSelector((state) => state.auth.emailError);
+  const password = useSelector((state) => state.auth.password);
+  const passwordError = useSelector((state) => state.auth.passwordError);
 
   const inputStyles = {
     mt: "2",
@@ -60,32 +67,32 @@ const SignIn = () => {
   };
 
   const onEmailChange = (e) => {
-    setEmail(e.target.value);
+    dispatch(setEmail(e.target.value));
     if (!e.target.value) {
-      setEmailError("This field is required");
+      dispatch(setEmailError("This field is required"));
     } else if (!/\S+@\S+\.\S+/.test(e.target.value)) {
-      setEmailError("Invalid Email format");
+      dispatch(setEmailError("Invalid Email format"));
     } else {
-      setEmailError("");
+      dispatch(setEmailError(""));
     }
   };
 
   const onPasswordChange = (e) => {
-    setPassword(e.target.value);
+    dispatch(setPassword(e.target.value));
     if (!e.target.value) {
-      setPasswordError("This field is required");
+      dispatch(setPasswordError("This field is required"));
     } else {
-      setPasswordError("");
+      dispatch(setPasswordError(""));
     }
   };
 
   const handleLogin = async () => {
     if (!email) {
-      setEmailError("This field is required");
+      dispatch(setEmailError("This field is required"));
       return;
     }
     if (!password) {
-      setPasswordError("This field is required");
+      dispatch(setPasswordError("This field is required"));
       return;
     }
 
@@ -104,13 +111,13 @@ const SignIn = () => {
       if (error.response && error.response.data) {
         console.error("Error loggin in:", error.response.data);
         if (error.response.data.message === "User Not exist") {
-          setEmailError("User Not Exists");
+          dispatch(setEmailError("User Not Exists"));
           console.error(
             "(If-Else)Error logging in:",
             error.response.data.message
           );
         } else if (error.response.data.message === "Incorrect Password") {
-          setPasswordError("Incorrect Password");
+          dispatch(setPasswordError("Incorrect Password"));
           console.error(
             "(If-Else)Error logging in:",
             error.response.data.message

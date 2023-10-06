@@ -14,7 +14,7 @@ import CreateProductPage from "./pages/CreateProductPage";
 import AllProductsPage from "./pages/AllProductsPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 
-import store from "./app/store";
+import store from "./store/configureStore";
 
 function App() {
   const [searchInput, setSearchInput] = useState("");

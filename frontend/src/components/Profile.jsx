@@ -7,15 +7,15 @@ import {
   DrawerHeader,
   DrawerOverlay,
 } from "@chakra-ui/react";
-import { useNavigate, Link } from "react-router-dom";
+import { BsFillPersonFill } from "react-icons/bs";
+
+import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { userLoggedIn, userLoggedOut } from "../services/authSlice";
-import { BsFillPersonFill } from "react-icons/bs";
+import { userLoggedIn, userLoggedOut } from "../store/authSlice";
 
 const Profile = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
@@ -26,24 +26,10 @@ const Profile = () => {
     }
   }, [dispatch]);
 
-  const handleUpdatePassword = async () => {
-    try {
-    } catch (error) {}
-  };
-
   const handleLogout = () => {
     localStorage.removeItem("token");
     dispatch(userLoggedOut());
     setIsDrawerOpen(false);
-    navigate("/");
-  };
-  const handleLogin = async () => {
-    try {
-    } catch (error) {}
-  };
-  const handleSignUp = async () => {
-    try {
-    } catch (error) {}
   };
 
   return (
@@ -74,9 +60,11 @@ const Profile = () => {
                     Update Password
                   </Button>
                 </Link>
-                <Button mt={4} colorScheme="red" onClick={handleLogout}>
-                  Logout
-                </Button>
+                <Link to="/">
+                  <Button mt={4} colorScheme="red" onClick={handleLogout}>
+                    Logout
+                  </Button>
+                </Link>
               </>
             ) : (
               <>
