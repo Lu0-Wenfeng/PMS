@@ -1,16 +1,11 @@
 import { Box, Button, Center, Input, Text } from "@chakra-ui/react";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import MyCard from "../components/MyCard";
-import { setEmail, setEmailError } from "../store/authSlice";
 
 const UpdatePassword = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
 
-  const email = useSelector((state) => state.auth.email);
-  const emailError = useSelector((state) => state.auth.emailError);
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
 
   const inputStyles = {
     mt: "2",
@@ -37,18 +32,18 @@ const UpdatePassword = () => {
 
   const onEmailBlur = () => {
     if (!email) {
-      dispatch(setEmailError("This field is required"));
+      setEmailError("This field is required");
     }
   };
 
   const onEmailChange = (e) => {
-    dispatch(setEmail(e.target.value));
+    setEmail(e.target.value);
     if (!e.target.value) {
-      dispatch(setEmailError("This field is required"));
+      setEmailError("This field is required");
     } else if (!/\S+@\S+\.\S+/.test(e.target.value)) {
-      dispatch(setEmailError("Invalid Email format"));
+      setEmailError("Invalid Email format");
     } else {
-      dispatch(setEmailError(""));
+      setEmailError("");
     }
   };
 

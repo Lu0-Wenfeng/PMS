@@ -11,23 +11,16 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import MyCard from "../components/MyCard";
-import {
-  setEmail,
-  setEmailError,
-  setPassword,
-  setPasswordError,
-  userSignUp,
-} from "../store/authSlice";
+import { userSignUp } from "../store/authSlice";
 
 const SignUp = () => {
-  const [show, setShow] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const email = useSelector((state) => state.auth.email);
-  const emailError = useSelector((state) => state.auth.emailError);
-  const password = useSelector((state) => state.auth.password);
-  const passwordError = useSelector((state) => state.auth.passwordError);
+  const [show, setShow] = useState(false);
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   const inputStyles = {
     mt: "2",
@@ -56,39 +49,39 @@ const SignUp = () => {
 
   const onEmailBlur = () => {
     if (!email) {
-      dispatch(setEmailError("This field is required"));
+      setEmailError("This field is required");
     }
   };
 
   const onPasswordBlur = () => {
     if (!password) {
-      dispatch(setPasswordError("This field is required"));
+      setPasswordError("This field is required");
     }
   };
 
   const onEmailChange = (e) => {
-    dispatch(setEmail(e.target.value));
+    setEmail(e.target.value);
     if (!e.target.value) {
-      dispatch(setEmailError("This field is required"));
+      setEmailError("This field is required");
     } else if (!/\S+@\S+\.\S+/.test(e.target.value)) {
-      dispatch(setEmailError("Invalid Email format"));
+      setEmailError("Invalid Email format");
     } else {
-      dispatch(setEmailError(""));
+      setEmailError("");
     }
   };
 
   const onPasswordChange = (e) => {
-    dispatch(setPassword(e.target.value));
+    setPassword(e.target.value);
     if (!e.target.value) {
-      dispatch(setPasswordError("This field is required"));
+      setPasswordError("This field is required");
     } else {
-      dispatch(setPasswordError(""));
+      setPasswordError("");
     }
   };
 
   const handleSignUp = async () => {
     try {
-      await dispatch(userSignUp({ email, password })).unwrap();
+      await dispatch(userSignUp(email, password)).unwrap();
       alert("Signed Up Successfully");
       navigate("/success");
     } catch (error) {

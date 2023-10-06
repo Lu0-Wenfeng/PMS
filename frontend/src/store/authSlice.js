@@ -3,18 +3,25 @@ import axios from "axios";
 
 export const userSignIn = createAsyncThunk(
   "auth/userSignIn",
-  async (email, password) => {
-    const response = await axios.post("http://localhost:3000/sign-in", {
-      email: email,
-      password: password,
-    });
-    return response.data;
+  async ({ email, password }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post("http://localhost:3000/sign-in", {
+        email: email,
+        password: password,
+      });
+      return response.data;
+    } catch (error) {
+      if (!error.response) {
+        throw error;
+      }
+      return rejectWithValue(error.response.data);
+    }
   }
 );
 
 export const userSignUp = createAsyncThunk(
   "auth/userSignUp",
-  async (email, password) => {
+  async ({ email, password }) => {
     const response = await axios.post("http://localhost:3000/sign-up", {
       email: email,
       password: password,
@@ -66,13 +73,12 @@ const authSlice = createSlice({
         state.isLoggedIn = true;
       })
       .addCase(userSignIn.rejected, (state, action) => {
-        // login failed
-        if (action.error.message === "User Not exist") {
-          state.emailError = action.error.message;
-        } else if (action.error.message === "Incorrect Password") {
-          state.passwordError = action.error.message;
-        } else {
-          state.unknownError = action.error.message;
+        if (!action.payload) {
+          state.unknownError = action.payload.message;
+        } else if (action.payload.message === "User Not exist") {
+          state.emailError = action.payload.message;
+        } else if (action.payload.message === "Incorrect Password") {
+          state.passwordError = action.payload.message;
         }
       })
       .addCase(userSignUp.fulfilled, (state, action) => {
@@ -80,10 +86,10 @@ const authSlice = createSlice({
       })
       .addCase(userSignUp.rejected, (state, action) => {
         // sign up failed
-        if (action.error.message === "Username already exists") {
-          state.emailError = action.error.message;
-        } else {
-          state.unknownError = action.error.message;
+        if (!action.payload) {
+          state.unknownError = action.payload.message;
+        } else if (action.payload.message === "Username already exists") {
+          state.emailError = action.payload.message;
         }
       });
   },
