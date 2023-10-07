@@ -1,15 +1,13 @@
 import {
   Flex,
-  Text,
-  Center,
   HStack,
   useBreakpointValue,
 } from "@chakra-ui/react";
 import React from "react";
 import Title from "./Title";
 import SearchBar from "../SearchBar";
-import { BsFillPersonFill, BsCart3 } from "react-icons/bs";
 import Profile from "../Profile";
+import Cart from "../Cart";
 
 const Header = (onSearch) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
@@ -28,10 +26,7 @@ const Header = (onSearch) => {
             <Title mobile={isMobile} />
             <HStack spacing="24px">
               <Profile />
-              <Center>
-                <BsCart3 />
-                <Text>$ 0.00</Text>
-              </Center>
+              <Cart />
             </HStack>
           </Flex>
           <SearchBar onSearch={onSearch} />
@@ -42,10 +37,7 @@ const Header = (onSearch) => {
           <SearchBar onSearch={onSearch} />
           <HStack spacing="24px">
             <Profile />
-            <Center>
-              <BsCart3 />
-              <Text>$ 0.00</Text>
-            </Center>
+            <Cart />
           </HStack>
         </>
       )}

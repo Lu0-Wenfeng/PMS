@@ -52,7 +52,7 @@ const ProductDetailPage = () => {
             <strong>${productDetails.price}</strong>
           </Text>
 
-          <Text fontSize='xs'
+          <Text fontSize='sm'
             color={productDetails.inStockQuantity > 0 ? 'black' : 'deepred'}
             border="1px solid #000"
             background={'tomato'}
@@ -71,7 +71,7 @@ const ProductDetailPage = () => {
             Add to cart
           </Button>
 
-          <Button colorScheme={'gray'}>
+          <Button colorScheme={'purple'}>
             Edit
           </Button>
         </HStack>
