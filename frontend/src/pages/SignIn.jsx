@@ -11,7 +11,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import MyCard from "../components/MyCard";
-import { userSignIn } from "../store/authSlice";
+import { userSignIn, setIsAdmin } from "../store/authSlice";
 
 const SignIn = () => {
   const [show, setShow] = useState(false);
@@ -89,14 +89,17 @@ const SignIn = () => {
     }
 
     try {
-      await dispatch(userSignIn({ email, password })).unwrap();
+      const { token, userType } = await dispatch(
+        userSignIn({ email, password })
+      ).unwrap();
+      userType === "admin" && dispatch(setIsAdmin(true));
       alert("Login Successful");
       navigate("/success");
     } catch (error) {
       if (error.message === "User Not exist") {
         setEmailError(error.message);
       } else if (error.message === "Incorrect Password") {
-        setPasswordError(error.message); 
+        setPasswordError(error.message);
       } else {
         console.error("Error logging in", error.message);
       }

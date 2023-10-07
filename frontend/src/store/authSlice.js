@@ -9,6 +9,7 @@ export const userSignIn = createAsyncThunk(
         email: email,
         password: password,
       });
+      console.log(response.data);
       return response.data;
     } catch (error) {
       if (!error.response) {
@@ -21,16 +22,25 @@ export const userSignIn = createAsyncThunk(
 
 export const userSignUp = createAsyncThunk(
   "auth/userSignUp",
-  async ({ email, password }) => {
-    const response = await axios.post("http://localhost:3000/sign-up", {
-      email: email,
-      password: password,
-    });
-    return response.data;
+  async ({ email, password, isAdmin }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post("http://localhost:3000/sign-up", {
+        email: email,
+        password: password,
+        isAdmin: isAdmin,
+      });
+      return response.data;
+    } catch (error) {
+      if (!error.response) {
+        throw error;
+      }
+      return rejectWithValue(error.response.data);
+    }
   }
 );
 
 const initialState = {
+  isAdmin: false,
   isLoggedIn: false,
   token: null,
   userType: null,
@@ -45,6 +55,9 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
+    setIsAdmin: (state, action) => {
+      state.isAdmin = action.payload;
+    },
     userLoggedIn: (state, action) => {
       state.isLoggedIn = true;
       state.userData = action.payload;
@@ -96,6 +109,7 @@ const authSlice = createSlice({
 });
 
 export const {
+  setIsAdmin,
   userLoggedIn,
   userLoggedOut,
   setEmail,

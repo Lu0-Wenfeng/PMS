@@ -7,11 +7,10 @@ import {
   Image,
   Text,
   Button,
-  Link as ChakraLink,
+  Link,
   Select,
   HStack,
 } from "@chakra-ui/react";
-import { Link as RouterLink } from "react-router-dom";
 
 const ITEMS_PER_PAGE = 10;
 // const PRODUCTS_PER_ROW = 5;
@@ -25,15 +24,6 @@ const AllProductsPage = () => {
     variant: "outline",
     border: "1px solid",
     borderColor: "gray.300",
-  };
-
-  const buttonStyles = {
-    my: "2",
-    bg: "#5048E5",
-    textColor: "white",
-    _hover: {
-      bg: "rgba(80, 72, 229, 0.9)",
-    },
   };
 
   useEffect(() => {
@@ -100,12 +90,12 @@ const AllProductsPage = () => {
     for (let i = startPage; i <= endPage; i++) {
       pageButtons.push(
         <Button
+          colorScheme="orange"
           key={i}
           variant={i === currentPage ? "solid" : "outline"}
           size="sm"
           onClick={() => handlePageChange(i)}
           ml="2"
-          {...buttonStyles}
         >
           {i}
         </Button>
@@ -132,11 +122,11 @@ const AllProductsPage = () => {
             <option value="priceHighToLow">Price High to Low</option>
             <option value="priceLowToHigh">Price Low to High</option>
           </Select>
-          <ChakraLink href="/create-product">
-            <Button colorScheme="teal" size="sm" bg={"green"}>
+          <Link href="/create-product">
+            <Button colorScheme="teal" size="sm" bg={"purple"}>
               Add Product
             </Button>
-          </ChakraLink>
+          </Link>
         </Flex>
       </Flex>
 
@@ -151,10 +141,7 @@ const AllProductsPage = () => {
                 width={{ base: "100%", md: "50%", lg: "20%" }}
                 p="2"
               >
-                <ChakraLink
-                  key={product._id}
-                  href={`./all-products/${product._id}`}
-                >
+                <Link key={product._id} href={`./all-products/${product._id}`}>
                   <Image
                     src={product.productImageUrl}
                     alt={product.name}
@@ -167,13 +154,14 @@ const AllProductsPage = () => {
                   <Text>
                     <strong>${product.price}</strong>
                   </Text>
-                </ChakraLink>
-                
-                {/* 这里应该是Admin才能看见的功能 */}
-                {/* <HStack>
-                  <Button {...buttonStyles}>这里放数量</Button>
-                  <Button {...buttonStyles}>Edit</Button>
-                </HStack> */}
+                </Link>
+
+                <HStack>
+                  <Button bg={"purple"}>这里放数量</Button>
+                  <Link href={`/edit-product/${product._id}`}>
+                    <Button>Edit</Button>
+                  </Link>
+                </HStack>
               </Box>
             ))}
           </Flex>
@@ -187,12 +175,12 @@ const AllProductsPage = () => {
               Page {currentPage} of {totalPages}
             </Text> */}
             <Button
+              colorScheme="blue.700"
               variant="outline"
               size="sm"
               onClick={() => handlePageChange(currentPage - 1)}
               isDisabled={currentPage === 1}
               ml="2"
-              {...buttonStyles}
             >
               «
             </Button>
@@ -200,12 +188,12 @@ const AllProductsPage = () => {
             {renderPageButtons()}
 
             <Button
+              colorScheme="blue.700"
               variant="outline"
               size="sm"
               onClick={() => handlePageChange(currentPage + 1)}
               isDisabled={currentPage === totalPages}
               ml="2"
-              {...buttonStyles}
             >
               »
             </Button>
@@ -217,4 +205,4 @@ const AllProductsPage = () => {
   );
 };
 
-export default AllProductsPage
+export default AllProductsPage;

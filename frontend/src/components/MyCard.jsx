@@ -10,12 +10,12 @@ const MyCard = ({ title, children }) => {
   return (
     <Box
       position="relative"
-      bgColor="white"
       p="5"
       border="1px solid"
       borderColor="gray.300"
       boxShadow="md"
       borderRadius="md"
+      textColor="black"
       w={["90%", "50%"]}
       m="auto"
       my={["20%", "10%"]}
@@ -28,7 +28,7 @@ const MyCard = ({ title, children }) => {
         size="xl"
         onClick={handleClick}
       />
-      <Center fontSize="2xl" my="2" fontWeight="bold" color="black">
+      <Center fontSize="2xl" my="2" fontWeight="bold" >
         {title}
       </Center>
       {children}

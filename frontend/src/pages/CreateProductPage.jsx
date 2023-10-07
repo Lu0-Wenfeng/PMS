@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Box,
   Heading,
@@ -14,16 +15,31 @@ import {
   Image,
   Textarea,
 } from "@chakra-ui/react";
+import {
+  setProductName,
+  setProductPrice,
+  setProductDescription,
+  setProductCategory,
+  setProductInStockQuantity,
+  setProductImageURL,
+  setProductCreated,
+  createProduct,
+} from "../store/productSlice";
 
 const CreateProductPage = () => {
-  const [productName, setProductName] = useState("");
-  const [productPrice, setProductPrice] = useState("");
-  const [productDescription, setProductDescription] = useState("");
-  const [productCategory, setProductCategory] = useState("");
-  const [productinStockQuantity, setProductinStockQuantity] = useState(0);
-  const [productImageUrl, setProductImageUrl] = useState("");
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [productCreated, setProductCreated] = useState(false);
+
+  const productName = useSelector((state) => state.product.productName);
+  const productPrice = useSelector((state) => state.product.productPrice);
+  const productDescription = useSelector(
+    (state) => state.product.productDescription
+  );
+  const productImageURL = useSelector((state) => state.product.productImageURL);
+  const productInStockQuantity = useSelector(
+    (state) => state.product.productInStockQuantity
+  );
+  const productCategory = useSelector((state) => state.product.productCategory);
 
   const inputStyles = {
     mt: "2",
@@ -44,7 +60,7 @@ const CreateProductPage = () => {
       !productPrice ||
       !productDescription ||
       !productCategory ||
-      !productinStockQuantity
+      !productInStockQuantity
     ) {
       console.error("All fields are required");
     }
@@ -54,52 +70,18 @@ const CreateProductPage = () => {
       description: productDescription,
       category: productCategory,
       price: productPrice,
-      inStockQuantity: productinStockQuantity,
-      productImageUrl: productImageUrl,
+      inStockQuantity: productInStockQuantity,
+      productImageURL: productImageURL,
     };
-
     try {
-      const response = await axios.post(
-        "http://localhost:3000/create-product",
-        newProduct,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.data) {
-        // Product creation successful, handle subsequent logic
-        console.log("Product created successfully");
-        setProductName("");
-        setProductPrice("");
-        setProductDescription("");
-        setProductCategory("");
-        setProductinStockQuantity(0);
-        setProductImageUrl("");
-        setProductCreated(true);
-
-        // alert('Product has been created successfully.');
-        // navigate("/all-products");
-      } else {
-        // Product creation failed, handle error message
-        console.error("Product creation failed:", response.data);
-      }
-    } catch (error) {
-      console.error("Error during product creation:", error.message);
-    }
-  };
-
-  useEffect(() => {
-    if (productCreated) {
-      // Perform side effects after the component re-renders
+      await dispatch(createProduct(newProduct)).unwrap();
       alert("Product has been created successfully.");
       navigate("/all-products");
-      // Reset the flag
-      setProductCreated(false);
+      dispatch(setProductCreated(false));
+    } catch (error) {
+      console.error("Error when creating a product", error.message);
     }
-  }, [productCreated, navigate]);
+  };
 
   // const handleDrop = (event) => {
   //   event.preventDefault();
@@ -131,7 +113,7 @@ const CreateProductPage = () => {
             <Input
               type="text"
               value={productName}
-              onChange={(e) => setProductName(e.target.value)}
+              onChange={(e) => dispatch(setProductName(e.target.value))}
               {...inputStyles}
               placeholder="Enter product name"
             />
@@ -141,7 +123,7 @@ const CreateProductPage = () => {
             <FormLabel>Product Description</FormLabel>
             <Textarea
               value={productDescription}
-              onChange={(e) => setProductDescription(e.target.value)}
+              onChange={(e) => dispatch(setProductDescription(e.target.value))}
               {...inputStyles}
               placeholder="Enter product description"
             />
@@ -153,34 +135,36 @@ const CreateProductPage = () => {
               <Input
                 type="number"
                 value={productPrice}
-                onChange={(e) => setProductPrice(e.target.value)}
+                onChange={(e) => dispatch(setProductPrice(e.target.value))}
                 {...inputStyles}
                 placeholder="Enter price"
               />
             </FormControl>
 
-        <FormControl w="200%">
-          <FormLabel>Category</FormLabel>
-          <Select
-              value={productCategory}
-              onChange={(e) => setProductCategory(e.target.value)}
-              placeholder="Select product category"
-            >
-              <option value="electronics">Electronics</option>
-              <option value="clothing">Clothing</option>
-              <option value="books">Books</option>
-              {/* Add more categories as needed */}
-            </Select>
-        </FormControl>
-        </HStack>
+            <FormControl w="200%">
+              <FormLabel>Category</FormLabel>
+              <Select
+                value={productCategory}
+                onChange={(e) => dispatch(setProductCategory(e.target.value))}
+                placeholder="Select product category"
+              >
+                <option value="electronics">Electronics</option>
+                <option value="clothing">Clothing</option>
+                <option value="books">Books</option>
+                {/* Add more categories as needed */}
+              </Select>
+            </FormControl>
+          </HStack>
 
           <HStack spacing="20" align="stretch" justify="center">
             <FormControl>
               <FormLabel>In Stock Quantity</FormLabel>
               <Input
                 type="number"
-                value={productinStockQuantity}
-                onChange={(e) => setProductinStockQuantity(e.target.value)}
+                value={productInStockQuantity}
+                onChange={(e) =>
+                  dispatch(setProductInStockQuantity(e.target.value))
+                }
                 {...inputStyles}
                 placeholder="Enter in stock quantity"
               />
@@ -190,8 +174,8 @@ const CreateProductPage = () => {
               <FormLabel>Add Image Link</FormLabel>
               <Input
                 type="text"
-                value={productImageUrl}
-                onChange={(e) => setProductImageUrl(e.target.value)}
+                value={productImageURL}
+                onChange={(e) => dispatch(setProductImageURL(e.target.value))}
                 {...inputStyles}
                 placeholder="Enter product image URL"
               />
@@ -217,7 +201,7 @@ const CreateProductPage = () => {
 
           <Box p="4" border="2px" borderColor="gray.200" borderRadius="md">
             <Image
-              src={productImageUrl}
+              src={productImageURL}
               alt="Product Preview"
               height="100px"
               maxW="100%"

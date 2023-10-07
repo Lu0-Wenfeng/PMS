@@ -6,12 +6,13 @@ import {
   InputRightElement,
   Link,
   Text,
+  Checkbox,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import MyCard from "../components/MyCard";
-import { userSignUp } from "../store/authSlice";
+import { userSignUp, setIsAdmin } from "../store/authSlice";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ const SignUp = () => {
   const [emailError, setEmailError] = useState("");
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const isAdmin = useSelector((state) => state.auth.isAdmin);
 
   const inputStyles = {
     mt: "2",
@@ -32,7 +34,6 @@ const SignUp = () => {
       borderColor: "blue.500",
       boxShadow: "0 0 0 1px #3182ce",
     },
-    autoFocus: true,
   };
 
   const buttonStyles = {
@@ -79,9 +80,13 @@ const SignUp = () => {
     }
   };
 
+  const handleIsAdminChange = (e) => {
+    dispatch(setIsAdmin(e.target.checked));
+  };
+
   const handleSignUp = async () => {
     try {
-      await dispatch(userSignUp(email, password)).unwrap();
+      await dispatch(userSignUp({ email, password, isAdmin })).unwrap();
       alert("Signed Up Successfully");
       navigate("/success");
     } catch (error) {
@@ -97,7 +102,7 @@ const SignUp = () => {
 
   return (
     <Box display="flex" justifyContent="center" alignItems="center" h="100%">
-      <MyCard title="Sign Up an account">
+      <MyCard title="Sign Up an Account">
         <Box mb="5">
           <Text textColor="gray">Email:</Text>
           <Input
@@ -140,6 +145,15 @@ const SignUp = () => {
             </Text>
           )}
         </Box>
+        <Checkbox
+          colorScheme="linkedin"
+          textColor="black"
+          onChange={handleIsAdminChange}
+          isChecked={isAdmin}
+        >
+          Sign up as admin?
+        </Checkbox>
+
         <Button {...buttonStyles} onClick={handleSignUp}>
           Sign Up
         </Button>
