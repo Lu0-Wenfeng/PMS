@@ -24,6 +24,11 @@ const SignUp = () => {
   const [passwordError, setPasswordError] = useState("");
   const isAdmin = useSelector((state) => state.auth.isAdmin);
 
+  const [adminKey, setAdminKey] = useState("");
+  const [showAdminInput, setShowAdminInput] = useState(false);
+  const [adminKeyError, setAdminKeyError] = useState(false); 
+  const ADMIN_KEY = "WHOSYOURDADDY";
+
   const inputStyles = {
     mt: "2",
     variant: "outline",
@@ -80,12 +85,56 @@ const SignUp = () => {
     }
   };
 
+  // const handleIsAdminChange = (e) => {
+  //   dispatch(setIsAdmin(e.target.checked));
+  // };
+
+  // const handleSignUp = async () => {
+  //   try {
+  //     await dispatch(userSignUp({ email, password, isAdmin })).unwrap();
+  //     alert("Signed Up Successfully");
+  //     navigate("/success");
+  //   } catch (error) {
+  //     console.error("Error signing up", error.message);
+  //   }
+  // };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleSignUp();
+    }
+  };
+
   const handleIsAdminChange = (e) => {
     dispatch(setIsAdmin(e.target.checked));
+
+    // 如果用户选择以管理员身份注册，显示管理员密码输入框
+    if (e.target.checked) {
+      setShowAdminInput(true);
+    } else {
+      // 如果用户取消管理员身份注册，隐藏管理员密码输入框
+      setShowAdminInput(false);
+      setAdminKey(""); // 清空管理员密码输入框的值
+      setAdminKeyError(false); // 重置管理员密码错误状态
+    }
+  };
+
+  const handleAdminKeyChange = (e) => {
+    setAdminKey(e.target.value);
   };
 
   const handleSignUp = async () => {
     try {
+      // 如果用户选择以管理员身份注册，检查管理员密码是否正确
+      if (isAdmin && adminKey === ADMIN_KEY) {
+        setAdminKeyError(false);
+        alert('Admin authentication pass!')
+      } else if (isAdmin) {
+        setAdminKeyError(true);
+        return; // 如果管理员密码不正确，不执行注册操作
+      }
+
+      // 其余的注册逻辑保持不变
       await dispatch(userSignUp({ email, password, isAdmin })).unwrap();
       alert("Signed Up Successfully");
       navigate("/success");
@@ -93,12 +142,7 @@ const SignUp = () => {
       console.error("Error signing up", error.message);
     }
   };
-
-  const handleKeyDown = (event) => {
-    if (event.key === "Enter") {
-      handleSignUp();
-    }
-  };
+  
 
   return (
     <Box display="flex" justifyContent="center" alignItems="center" h="100%">
@@ -153,6 +197,27 @@ const SignUp = () => {
         >
           Sign up as admin?
         </Checkbox>
+
+        {/* 如果用户选择以管理员身份注册，显示管理员密码输入框 */}
+        {showAdminInput && (
+          <Box mb="5">
+            <Text textColor="gray">Admin Password:</Text>
+            <Input
+              type="password"
+              value={adminKey}
+              onChange={handleAdminKeyChange}
+              placeholder="Enter admin password"
+              {...inputStyles}
+              borderColor={adminKeyError ? "red.500" : "gray.300"}
+            />
+            {adminKeyError && (
+              <Text color="red.500" fontSize="sm" float="right">
+                Incorrect admin password
+              </Text>
+            )}
+          </Box>
+        )}
+
 
         <Button {...buttonStyles} onClick={handleSignUp}>
           Sign Up

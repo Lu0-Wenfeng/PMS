@@ -59,13 +59,13 @@ exports.signin = async (req, res) => {
 
     // Generate JWT token with user type as a claim
     const token = jwt.sign(
-      { userId: user._id, userType },
+      { userId: user._id },
       process.env.JWT_SECRET,
       {
         expiresIn: "1h", // Token expiration time
       }
     );
-
+    
     res.status(200).json({ token, userType });
   } catch (error) {
     console.error(error);

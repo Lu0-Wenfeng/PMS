@@ -19,6 +19,7 @@ const AllProductsPage = () => {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOption, setSortOption] = useState("lastAdded");
+  const [userType, setUserType] = useState("regular"); 
 
   const selectStyles = {
     variant: "outline",
@@ -31,7 +32,10 @@ const AllProductsPage = () => {
       try {
         const response = await axios.get("http://localhost:3000/all-products");
         if (response.status === 200) {
+          console.log(response.data);
           const productList = response.data.allProducts;
+          const userType = response.data.userData.userType;
+          setUserType(userType);
           setProducts(productList);
         } else {
           console.error("Failed to fetch product list");
@@ -122,11 +126,14 @@ const AllProductsPage = () => {
             <option value="priceHighToLow">Price High to Low</option>
             <option value="priceLowToHigh">Price Low to High</option>
           </Select>
-          <Link href="/create-product">
-            <Button colorScheme="teal" size="sm" bg={"purple"}>
-              Add Product
-            </Button>
-          </Link>
+
+          {userType === "admin" && (
+            <Link href="/create-product">
+              <Button colorScheme="teal" size="sm" bg={"purple"}>
+                Add Product
+              </Button>
+            </Link>
+          )}
         </Flex>
       </Flex>
 
