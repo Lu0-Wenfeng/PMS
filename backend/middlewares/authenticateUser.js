@@ -1,23 +1,28 @@
 // authenticateUser.js
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 exports.authenticateUser = async (req, res, next) => {
   try {
-    const token = req.headers.token ? req.headers.token.split(' ')[1] : null;
-    console.log(token);
+    const authHeader = req.headers.authorization;
+    let token = null;
+
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      token = authHeader.split(" ")[1];
+    }
+
     if (token) {
       const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-      console.log(decodedToken);
-      req.userData = { userId: decodedToken.userId, userType: decodedToken.userType };
-      } else {
-       req.userData = { userId: null, userType: 'regular' }; // Assume a regular user for unauthenticated requests
-      }
-
-    next();
+      req.userData = {
+        userId: decodedToken.userId,
+        userType: decodedToken.userType,
+      };
+      next();
+    } else {
+      return res
+        .status(401)
+        .json({ message: "Authentication failed: No token provided." });
+    }
   } catch (error) {
-    return res.status(401).json({ message: 'Authentication failed' });
+    return res.status(401).json({ message: "Authentication failed" });
   }
 };
-
-
-

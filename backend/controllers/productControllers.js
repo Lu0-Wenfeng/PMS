@@ -68,6 +68,7 @@ exports.getAllProducts = async (req, res) => {
   try {
     const userData = req.userData;
     const allProducts = await Product.find().sort({ createdAt: -1 });
+    console.log("userData", userData);
     res.status(200).json({
       userData,
       allProducts

@@ -4,10 +4,9 @@ User = require("../models/user");
 Product = require("../models/product");
 cart = require("../models/cart");
 
-
 exports.signup = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, isAdmin } = req.body;
 
     // Check if the username already exists
     const existingUser = await User.findOne({ email });
@@ -23,11 +22,12 @@ exports.signup = async (req, res) => {
     const newUser = new User({
       email,
       password: hashedPassword,
+      isAdmin,
     });
 
     await newUser.save();
-    
-    res.status(201).json({ message: "Signup successful" });
+
+    res.status(201).json({ message: "Signup successful", isAdmin: isAdmin, email: email });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
@@ -38,7 +38,7 @@ exports.signup = async (req, res) => {
 exports.signin = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log(email, password);
+    console.log("Signed In", email, password);
 
     // Check if the user exists
     const user = await User.findOne({ email });
@@ -58,15 +58,11 @@ exports.signin = async (req, res) => {
     const userType = user.isAdmin ? "admin" : "regular";
 
     // Generate JWT token with user type as a claim
-    const token = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "1h", // Token expiration time
-      }
-    );
-    
-    res.status(200).json({ token, userType });
+    const token = jwt.sign({ userId: user._id, userType }, process.env.JWT_SECRET, {
+      expiresIn: "1h", // Token expiration time
+    });
+
+    res.status(200).json({ token, isAdmin: user.isAdmin, email: user.email });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
