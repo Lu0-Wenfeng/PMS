@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import axios from "axios";
+import noImage from "../assets/no-image-placeholder-6f3882e0.webp";
 import {
   Box,
   Heading,
@@ -22,11 +22,9 @@ import {
 
 const AllProductsPage = () => {
   const dispatch = useDispatch();
-  const {
-    productList,
-    currentPage,
-    totalPages,
-  } = useSelector((state) => state.products);
+  const { productList, currentPage, totalPages } = useSelector(
+    (state) => state.products
+  );
   const isAdmin = useSelector((state) => state.auth.isAdmin);
   const sortOption = useSelector((state) => state.products.sortOption);
   const [sortedProducts, setSortedProducts] = useState([]);
@@ -153,7 +151,7 @@ const AllProductsPage = () => {
                   to={`./${product._id}`}
                 >
                   <Image
-                    src={product.productImageUrl}
+                    src={product.productImageUrl || noImage}
                     alt={product.name}
                     width="230px"
                     height="190px"

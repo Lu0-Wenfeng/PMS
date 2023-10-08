@@ -13,6 +13,7 @@ import UpdatePassword from "./pages/UpdatePassword";
 import CreateProductPage from "./pages/CreateProductPage";
 import AllProductsPage from "./pages/AllProductsPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
+import EditProductPage from "./pages/EditProduct";
 import ErrorPage from './pages/ErrorPage';
 
 import store from "./store/configureStore";
@@ -44,6 +45,7 @@ function App() {
               <Route path="/create-product" element={<CreateProductPage />} />
               <Route path="/all-products" element={<AllProductsPage />} />
               <Route path="/all-products/:id" element={<ProductDetailPage />} />
+              <Route path="/edit-product/:id" element={<EditProductPage />} />
             </Routes>
           </GridItem>
           <GridItem bg="#111827" area={"footer"}>

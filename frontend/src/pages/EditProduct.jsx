@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import noImage from "../assets/no-image-placeholder-6f3882e0.webp";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Box,
   Heading,
@@ -15,9 +15,9 @@ import {
   Image,
   Textarea,
 } from "@chakra-ui/react";
-import { createProduct } from "../store/productSlice";
+import { fetchProductDetails, updateProduct } from "../store/productSlice";
 
-const CreateProductPage = () => {
+const EditProduct = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [productName, setProductName] = useState("");
@@ -26,6 +26,8 @@ const CreateProductPage = () => {
   const [productCategory, setProductCategory] = useState("");
   const [productInStockQuantity, setProductInStockQuantity] = useState(0);
   const [productImageUrl, setproductImageUrl] = useState("");
+  const { id } = useParams();
+  const currentProduct = useSelector((state) => state.products.currentProduct);
 
   const inputStyles = {
     mt: "2",
@@ -40,10 +42,26 @@ const CreateProductPage = () => {
     autoFocus: true,
   };
 
-  const handleCreateProduct = async () => {
-    // Validation logic here...
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchProductDetails(id));
+    }
+  }, [id, dispatch]);
 
-    const newProduct = {
+  useEffect(() => {
+    if (currentProduct) {
+      setProductName(currentProduct.name);
+      setProductDescription(currentProduct.description);
+      setProductPrice(currentProduct.price);
+      setProductCategory(currentProduct.category);
+      setproductImageUrl(currentProduct.productImageUrl);
+      setProductInStockQuantity(currentProduct.productInStockQuantity);
+    }
+  }, [currentProduct]);
+
+  const handleUpdateProduct = async () => {
+    // Validation logic here...
+    const updatedProduct = {
       name: productName,
       description: productDescription,
       category: productCategory,
@@ -51,13 +69,12 @@ const CreateProductPage = () => {
       inStockQuantity: productInStockQuantity,
       productImageUrl,
     };
-
     try {
-      await dispatch(createProduct(newProduct)).unwrap();
-      alert("Product has been created successfully.");
+      await dispatch(updateProduct({ id, updatedProduct })).unwrap();
+      alert("Product has been updated successfully.");
       navigate("/all-products");
     } catch (error) {
-      console.error("Error when creating a product", error.message);
+      console.error("Error when updating the product", error.message);
       navigate("/error");
     }
   };
@@ -65,7 +82,7 @@ const CreateProductPage = () => {
   return (
     <Box p={{ base: 2, md: 4 }} maxW="600px" mx="auto" textColor="black">
       <Heading as="h1" mb="4">
-        Create Product
+        Edit Product
       </Heading>
       <Box boxShadow="dark-lg" p="6" rounded="md" bg="white">
         <VStack spacing="4">
@@ -144,7 +161,7 @@ const CreateProductPage = () => {
 
           <Box p="4" border="2px" borderColor="gray.200" borderRadius="md">
             <Image
-              src={productImageUrl}
+              src={productImageUrl || noImage}
               alt="Product Preview"
               height="100px"
               maxW="100%"
@@ -154,9 +171,9 @@ const CreateProductPage = () => {
           <Button
             colorScheme="blue"
             type="button"
-            onClick={handleCreateProduct}
+            onClick={handleUpdateProduct}
           >
-            Create Product
+            Update Product
           </Button>
         </VStack>
       </Box>
@@ -164,4 +181,4 @@ const CreateProductPage = () => {
   );
 };
 
-export default CreateProductPage;
+export default EditProduct;

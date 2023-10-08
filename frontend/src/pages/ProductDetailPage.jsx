@@ -1,3 +1,4 @@
+import noImage from "../assets/no-image-placeholder-6f3882e0.webp";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
@@ -22,17 +23,19 @@ const ProductDetailPage = () => {
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/all-products/${id}`);
+        const response = await axios.get(
+          `http://localhost:3000/all-products/${id}`
+        );
         if (response.data) {
           const productDetails = response.data;
           setProductDetails(productDetails);
         } else {
           console.error("Failed to fetch product details");
-          navigate('./error');
+          navigate("./error");
         }
       } catch (error) {
         console.error("Error during product details fetch:", error);
-        navigate('./error');
+        navigate("./error");
       }
     };
 
@@ -47,7 +50,7 @@ const ProductDetailPage = () => {
       <Box>
         <VStack align="stretch" spacing={{ base: 4, md: 8 }}>
           <Image
-            src={productDetails.productImageUrl}
+            src={productDetails.productImageUrl || noImage}
             alt={productDetails.name}
             width="100%"
             maxH={{ base: "300px", md: "500px" }}
@@ -59,11 +62,19 @@ const ProductDetailPage = () => {
               {productDetails.category}
             </Text>
 
-            <Text fontWeight="normal" fontSize={{ base: "2xl", md: "4xl" }} textColor={"gray"}>
+            <Text
+              fontWeight="normal"
+              fontSize={{ base: "2xl", md: "4xl" }}
+              textColor={"gray"}
+            >
               {productDetails.name}
             </Text>
 
-            <HStack p={{ base: 2, md: 5 }} spacing={{ base: 2, md: 10 }} alignSelf="start">
+            <HStack
+              p={{ base: 2, md: 5 }}
+              spacing={{ base: 2, md: 10 }}
+              alignSelf="start"
+            >
               <Text fontSize={{ base: "2xl", md: "4xl" }}>
                 <strong>${productDetails.price}</strong>
               </Text>
@@ -72,7 +83,9 @@ const ProductDetailPage = () => {
                 fontSize={{ base: "sm", md: "md" }}
                 color={productDetails.inStockQuantity > 0 ? "black" : "deepred"}
                 border="1px solid #000"
-                background={productDetails.inStockQuantity > 0 ? "tomato" : "lightcoral"}
+                background={
+                  productDetails.inStockQuantity > 0 ? "tomato" : "lightcoral"
+                }
                 borderRadius="8px"
                 padding="5px"
               >

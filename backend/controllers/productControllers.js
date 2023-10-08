@@ -2,13 +2,6 @@ const Product = require("../models/product");
 
 exports.createProduct = async (req, res) => {
   try {
-    // Check if the user is an admin
-    if (req.userData.userType !== 'admin') {
-      return res.status(403).json({
-        message: 'Permission denied. Only admins can create products.',
-      });
-    }
-
     const {
       name,
       description,
@@ -30,10 +23,13 @@ exports.createProduct = async (req, res) => {
       category: category,
       price: price,
       inStockQuantity: inStockQuantity,
-      productImageUrl: productImageUrl,
+      productImageUrl,
     });
     await newProduct.save();
-    res.status(201).json({ message: "Product created successfully", product: newProduct });
+    res.status(201).json({
+      message: "Backend Product created successfully",
+      product: newProduct,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
@@ -45,9 +41,9 @@ exports.productDeatails = async (req, res) => {
     // product name should be passed in
     const { id } = req.params;
     const product = await Product.findById(id);
-
+    console.log("product", product);
     if (!product) {
-      return res.status(404).json({ message: "Product not found" });
+      return res.status(404).json({ message: "Backend Product not found" });
     }
     const productDetails = {
       name: product.name,
@@ -57,7 +53,7 @@ exports.productDeatails = async (req, res) => {
       productImageUrl: product.productImageUrl,
       description: product.description,
     };
-
+    console.log("Backend Fetching product details: ", productDetails);
     res.status(200).json(productDetails);
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
@@ -72,7 +68,7 @@ exports.getAllProducts = async (req, res) => {
     console.log("userData", userData);
     res.status(200).json({
       userData,
-      allProducts
+      allProducts,
     });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
@@ -82,31 +78,29 @@ exports.getAllProducts = async (req, res) => {
 exports.editProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const {
-      name,
-      description,
-      category,
-      price,
-      inStockQuantity,
-      productImageUrl,
-    } = req.body;
-
+    const updatedProduct = req.body;
+    console.log("received edit product request", req.body);
     const product = await Product.findById(id);
     if (!product) {
-      return res.status(404).json({ message: "Product not found" });
+      return res.status(404).json({ message: "Backend Product not found" });
     }
 
     // Update product details
-    product.name = name;
-    product.description = description;
-    product.category = category;
-    product.price = price;
-    product.inStockQuantity = inStockQuantity;
-    product.productImageUrl = productImageUrl;
+    product.name = updatedProduct.name;
+    product.description = updatedProduct.description;
+    product.category = updatedProduct.category;
+    product.price = updatedProduct.price;
+    product.inStockQuantity = updatedProduct.inStockQuantity;
+    product.productImageUrl = updatedProduct.productImageUrl;
 
     await product.save();
+    console.log("Product after update", product);
 
-    res.status(200).json({ message: "Product updated successfully" });
+    res.status(200).json({
+      message: "Backend Product updated successfully",
+      id: product.id,
+      updatedProduct: product,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
@@ -115,7 +109,6 @@ exports.editProduct = async (req, res) => {
 
 exports.deleteProduct = async (req, res) => {
   try {
-
     const { id } = req.params;
     const product = await Product.findById(id);
     if (!product) {
@@ -124,7 +117,7 @@ exports.deleteProduct = async (req, res) => {
 
     await product.remove();
 
-    res.status(200).json({ message: "Product deleted successfully" });
+    res.status(200).json({ message: "Backend Product deleted successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });

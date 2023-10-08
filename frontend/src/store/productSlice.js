@@ -5,6 +5,7 @@ export const ITEMS_PER_PAGE = 10;
 
 const initialState = {
   productList: [],
+  currentProduct: null,
   totalPages: 0,
   currentPage: 1,
   sortOption: "lastAdded",
@@ -53,6 +54,56 @@ export const fetchAllProducts = createAsyncThunk(
   }
 );
 
+export const fetchProductDetails = createAsyncThunk(
+  "products/fetchProductDetails",
+  async (id, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        `http://localhost:3000/all-products/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        return response.data;
+      } else {
+        throw new Error("Failed to fetch product");
+      }
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const updateProduct = createAsyncThunk(
+  "products/updateProduct",
+  async ({ id, updatedProduct }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.put(
+        `http://localhost:3000/edit-product/${id}`,
+        updatedProduct,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.status === 200) {
+        return response.data;
+      } else {
+        throw new Error("Failed to update product");
+      }
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 const productSlice = createSlice({
   name: "products",
   initialState,
@@ -80,6 +131,26 @@ const productSlice = createSlice({
       })
       .addCase(fetchAllProducts.rejected, (state, action) => {
         console.error("Fetching all products failed", action.error);
+      })
+      .addCase(fetchProductDetails.fulfilled, (state, action) => {
+        console.log("Product fetched successfully", action.payload);
+        state.currentProduct = action.payload;
+      })
+      .addCase(fetchProductDetails.rejected, (state, action) => {
+        console.error("Fetching product failed", action.error);
+      })
+      .addCase(updateProduct.fulfilled, (state, action) => {
+        const { message, id, updatedProduct } = action.payload;
+        const index = state.productList.findIndex(
+          (product) => product._id === id
+        );
+        if (index !== -1) {
+          state.productList[index] = {...updatedProduct};
+        }
+        console.log("Product updated, ", message);
+      })
+      .addCase(updateProduct.rejected, (state, action) => {
+        console.error("Updating product failed", action.error);
       });
   },
 });
