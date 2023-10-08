@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import {
   Box,
@@ -7,19 +8,30 @@ import {
   Image,
   Text,
   Button,
-  Link,
+  Link as ChakraLink,
   Select,
   HStack,
 } from "@chakra-ui/react";
-
-const ITEMS_PER_PAGE = 10;
+import { Link as RouterLink } from "react-router-dom";
+import {
+  ITEMS_PER_PAGE,
+  fetchAllProducts,
+  setCurrentPage,
+  setSortOption,
+} from "../store/productSlice";
 // const PRODUCTS_PER_ROW = 5;
 
 const AllProductsPage = () => {
-  const [products, setProducts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [sortOption, setSortOption] = useState("lastAdded");
-  const [userType, setUserType] = useState("regular"); 
+  const dispatch = useDispatch();
+  const {
+    productList,
+    currentPage,
+    totalPages,
+  } = useSelector((state) => state.products);
+  const isAdmin = useSelector((state) => state.auth.isAdmin);
+  const sortOption = useSelector((state) => state.products.sortOption);
+  const [sortedProducts, setSortedProducts] = useState([]);
+  const [userType, setUserType] = useState("regular");
 
   const selectStyles = {
     variant: "outline",
@@ -28,63 +40,45 @@ const AllProductsPage = () => {
   };
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get("http://localhost:3000/all-products");
-        if (response.status === 200) {
-          console.log(response.data);
-          const productList = response.data.allProducts;
-          const userType = response.data.userData.userType;
-          setUserType(userType);
-          setProducts(productList);
-        } else {
-          console.error("Failed to fetch product list");
-        }
-      } catch (error) {
-        console.error("Error during product list fetch:", error);
-      }
-    };
-
     //确保组件未挂载时才调用 setProducts
-    if (products.length === 0) {
-      fetchProducts();
+    if (productList.length === 0) {
+      dispatch(fetchAllProducts());
     }
-  }, [products]);
+  }, [productList, dispatch]);
 
   useEffect(() => {
     const sortProducts = () => {
+      let sorted = [...productList];
       if (sortOption === "priceHighToLow") {
-        setProducts((prevProducts) =>
-          [...prevProducts].sort((a, b) => b.price - a.price)
-        );
+        sorted.sort((a, b) => b.price - a.price);
       } else if (sortOption === "priceLowToHigh") {
-        setProducts((prevProducts) =>
-          [...prevProducts].sort((a, b) => a.price - b.price)
-        );
+        sorted.sort((a, b) => a.price - b.price);
       } else if (sortOption === "lastAdded") {
-        setProducts((prevProducts) =>
-          [...prevProducts].sort(
-            (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
-          )
-        );
+        sorted.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
       }
+      setSortedProducts(sorted);
     };
 
     sortProducts();
-  }, [sortOption]);
+  }, [productList, sortOption]);
 
-  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
-  const currentProducts = products.slice(startIndex, endIndex);
+  const currentProducts = sortedProducts.slice(startIndex, endIndex);
 
-  const handlePageChange = useCallback((newPage) => {
-    setCurrentPage(newPage);
-  }, []);
+  const handlePageChange = useCallback(
+    (newPage) => {
+      dispatch(setCurrentPage(newPage));
+    },
+    [dispatch]
+  );
 
-  const handleSortChange = useCallback((option) => {
-    setSortOption(option);
-  }, []);
+  const handleSortChange = useCallback(
+    (option) => {
+      dispatch(setSortOption(option));
+    },
+    [dispatch]
+  );
 
   const renderPageButtons = () => {
     const pageButtons = [];
@@ -127,12 +121,12 @@ const AllProductsPage = () => {
             <option value="priceLowToHigh">Price Low to High</option>
           </Select>
 
-          {userType === "admin" && (
-            <Link href="/create-product">
+          {isAdmin && (
+            <ChakraLink as={RouterLink} to="/create-product">
               <Button colorScheme="teal" size="sm" bg={"purple"}>
                 Add Product
               </Button>
-            </Link>
+            </ChakraLink>
           )}
         </Flex>
       </Flex>
@@ -144,11 +138,15 @@ const AllProductsPage = () => {
           <Flex flexWrap="wrap">
             {currentProducts.map((product) => (
               <Box
-                key={product.id}
+                key={product._id}
                 width={{ base: "100%", md: "50%", lg: "20%" }}
                 p="2"
               >
-                <Link key={product._id} href={`./all-products/${product._id}`}>
+                <ChakraLink
+                  as={RouterLink}
+                  key={product._id}
+                  to={`./${product._id}`}
+                >
                   <Image
                     src={product.productImageUrl}
                     alt={product.name}
@@ -161,13 +159,16 @@ const AllProductsPage = () => {
                   <Text>
                     <strong>${product.price}</strong>
                   </Text>
-                </Link>
+                </ChakraLink>
 
                 <HStack>
                   <Button bg={"purple"}>这里放数量</Button>
-                  <Link href={`/edit-product/${product._id}`}>
-                    <Button>Edit</Button>
-                  </Link>
+                  <ChakraLink
+                    as={RouterLink}
+                    to={`/edit-product/${product._id}`}
+                  >
+                    <Button colorScheme="orange">Edit</Button>
+                  </ChakraLink>
                 </HStack>
               </Box>
             ))}

@@ -16,30 +16,19 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import {
-  setProductName,
-  setProductPrice,
-  setProductDescription,
-  setProductCategory,
-  setProductInStockQuantity,
-  setProductImageURL,
-  setProductCreated,
   createProduct,
 } from "../store/productSlice";
 
 const CreateProductPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const productName = useSelector((state) => state.product.productName);
-  const productPrice = useSelector((state) => state.product.productPrice);
-  const productDescription = useSelector(
-    (state) => state.product.productDescription
-  );
-  const productImageURL = useSelector((state) => state.product.productImageURL);
-  const productInStockQuantity = useSelector(
-    (state) => state.product.productInStockQuantity
-  );
-  const productCategory = useSelector((state) => state.product.productCategory);
+  const [productName, setProductName] = useState("");
+  const [productPrice, setProductPrice] = useState("");
+  const [productDescription, setProductDescription] = useState("");
+  const [productCategory, setProductCategory] = useState("");
+  const [productInStockQuantity, setProductInStockQuantity] = useState(0);
+  const [productImageURL, setProductImageURL] = useState("");
+  const [productCreated, setProductCreated] = useState(false);
 
   const inputStyles = {
     mt: "2",
@@ -77,7 +66,7 @@ const CreateProductPage = () => {
       await dispatch(createProduct(newProduct)).unwrap();
       alert("Product has been created successfully.");
       navigate("/all-products");
-      dispatch(setProductCreated(false));
+      setProductCreated(false);
     } catch (error) {
       console.error("Error when creating a product", error.message);
     }
@@ -113,7 +102,7 @@ const CreateProductPage = () => {
             <Input
               type="text"
               value={productName}
-              onChange={(e) => dispatch(setProductName(e.target.value))}
+              onChange={(e) => setProductName(e.target.value)}
               {...inputStyles}
               placeholder="Enter product name"
             />
@@ -123,7 +112,7 @@ const CreateProductPage = () => {
             <FormLabel>Product Description</FormLabel>
             <Textarea
               value={productDescription}
-              onChange={(e) => dispatch(setProductDescription(e.target.value))}
+              onChange={(e) => setProductDescription(e.target.value)}
               {...inputStyles}
               placeholder="Enter product description"
             />
@@ -135,7 +124,7 @@ const CreateProductPage = () => {
               <Input
                 type="number"
                 value={productPrice}
-                onChange={(e) => dispatch(setProductPrice(e.target.value))}
+                onChange={(e) => setProductPrice(e.target.value)}
                 {...inputStyles}
                 placeholder="Enter price"
               />
@@ -145,7 +134,7 @@ const CreateProductPage = () => {
               <FormLabel>Category</FormLabel>
               <Select
                 value={productCategory}
-                onChange={(e) => dispatch(setProductCategory(e.target.value))}
+                onChange={(e) => setProductCategory(e.target.value)}
                 placeholder="Select product category"
               >
                 <option value="electronics">Electronics</option>
@@ -163,7 +152,7 @@ const CreateProductPage = () => {
                 type="number"
                 value={productInStockQuantity}
                 onChange={(e) =>
-                  dispatch(setProductInStockQuantity(e.target.value))
+                  setProductInStockQuantity(e.target.value)
                 }
                 {...inputStyles}
                 placeholder="Enter in stock quantity"
@@ -175,7 +164,7 @@ const CreateProductPage = () => {
               <Input
                 type="text"
                 value={productImageURL}
-                onChange={(e) => dispatch(setProductImageURL(e.target.value))}
+                onChange={(e) => setProductImageURL(e.target.value)}
                 {...inputStyles}
                 placeholder="Enter product image URL"
               />

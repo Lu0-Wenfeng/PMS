@@ -4,13 +4,13 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  Link,
+  Link as ChakraLink,
   Text,
   Checkbox,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link as RouterLink } from "react-router-dom";
 import MyCard from "../components/MyCard";
 import { userSignUp, setIsAdmin } from "../store/authSlice";
 
@@ -22,11 +22,11 @@ const SignUp = () => {
   const [emailError, setEmailError] = useState("");
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const isAdmin = useSelector((state) => state.auth.isAdmin);
+  const [isAdminChecked, setIsAdminChecked] = useState(false);
 
   const [adminKey, setAdminKey] = useState("");
   const [showAdminInput, setShowAdminInput] = useState(false);
-  const [adminKeyError, setAdminKeyError] = useState(false); 
+  const [adminKeyError, setAdminKeyError] = useState(false);
   const ADMIN_KEY = "WHOSYOURDADDY";
 
   const inputStyles = {
@@ -106,8 +106,7 @@ const SignUp = () => {
   };
 
   const handleIsAdminChange = (e) => {
-    dispatch(setIsAdmin(e.target.checked));
-
+    setIsAdminChecked(e.target.checked);
     // 如果用户选择以管理员身份注册，显示管理员密码输入框
     if (e.target.checked) {
       setShowAdminInput(true);
@@ -126,23 +125,24 @@ const SignUp = () => {
   const handleSignUp = async () => {
     try {
       // 如果用户选择以管理员身份注册，检查管理员密码是否正确
-      if (isAdmin && adminKey === ADMIN_KEY) {
+      if (isAdminChecked && adminKey === ADMIN_KEY) {
         setAdminKeyError(false);
-        alert('Admin authentication pass!')
-      } else if (isAdmin) {
+        alert("Admin authentication pass!");
+      } else if (isAdminChecked) {
         setAdminKeyError(true);
         return; // 如果管理员密码不正确，不执行注册操作
       }
 
       // 其余的注册逻辑保持不变
-      await dispatch(userSignUp({ email, password, isAdmin })).unwrap();
+      await dispatch(
+        userSignUp({ email, password, isAdmin: isAdminChecked })
+      ).unwrap();
       alert("Signed Up Successfully");
-      navigate("/success");
+      navigate("/all-products");
     } catch (error) {
       console.error("Error signing up", error.message);
     }
   };
-  
 
   return (
     <Box display="flex" justifyContent="center" alignItems="center" h="100%">
@@ -193,7 +193,7 @@ const SignUp = () => {
           colorScheme="linkedin"
           textColor="black"
           onChange={handleIsAdminChange}
-          isChecked={isAdmin}
+          isChecked={isAdminChecked}
         >
           Sign up as admin?
         </Checkbox>
@@ -218,17 +218,16 @@ const SignUp = () => {
           </Box>
         )}
 
-
         <Button {...buttonStyles} onClick={handleSignUp}>
           Sign Up
         </Button>
 
         <Text color="gray.500">
           Already have an account?
-          <Link href="/sign-in" color="blue.500">
+          <ChakraLink as={RouterLink} to="/sign-in" color="blue.500">
             {" "}
             Sign In
-          </Link>
+          </ChakraLink>
         </Text>
       </MyCard>
     </Box>

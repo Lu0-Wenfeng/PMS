@@ -4,16 +4,14 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  Link,
+  Link as ChakraLink,
   Text,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link as RouterLink } from "react-router-dom";
 import MyCard from "../components/MyCard";
 import { userSignIn, setIsAdmin } from "../store/authSlice";
-
-
 
 const SignIn = () => {
   const [show, setShow] = useState(false);
@@ -96,7 +94,7 @@ const SignIn = () => {
       ).unwrap();
       userType === "admin" && dispatch(setIsAdmin(true));
       alert("Login Successful");
-      navigate("/success");
+      navigate("/all-products");
     } catch (error) {
       if (error.message === "User Not exist") {
         setEmailError(error.message);
@@ -172,15 +170,15 @@ const SignIn = () => {
         >
           <Text maxWidth="50%">
             Don't have an account?
-            <Link href="/sign-up" color="blue.500">
+            <ChakraLink as={RouterLink} to="/sign-up" color="blue.500">
               {" "}
               Sign Up
-            </Link>
+            </ChakraLink>
           </Text>
           <Text>
-            <Link href="/update-pwd" color="blue.500">
+            <ChakraLink as={RouterLink} to="/update-pwd" color="blue.500">
               Forgot your password?
-            </Link>
+            </ChakraLink>
           </Text>
         </Box>
       </MyCard>
