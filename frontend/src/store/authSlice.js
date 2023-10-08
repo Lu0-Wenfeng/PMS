@@ -23,6 +23,7 @@ export const userSignIn = createAsyncThunk(
 export const userSignUp = createAsyncThunk(
   "auth/userSignUp",
   async ({ email, password, isAdmin }, { rejectWithValue }) => {
+    console.log("Sign Up:", email, password, isAdmin);
     try {
       const response = await axios.post("http://localhost:3000/sign-up", {
         email: email,
@@ -42,11 +43,8 @@ export const userSignUp = createAsyncThunk(
 const initialState = {
   isAdmin: false,
   isLoggedIn: false,
-  token: null,
-  userType: null,
   email: "",
   emailError: "",
-  password: "",
   passwordError: "",
   unknownError: "",
 };
@@ -55,28 +53,11 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setIsAdmin: (state, action) => {
-      state.isAdmin = action.payload;
-    },
     userLoggedIn: (state, action) => {
       state.isLoggedIn = true;
-      state.userData = action.payload;
     },
     userLoggedOut: (state) => {
       state.isLoggedIn = false;
-      state.userData = {};
-    },
-    setEmail: (state, action) => {
-      state.email = action.payload;
-    },
-    setEmailError: (state, action) => {
-      state.emailError = action.payload;
-    },
-    setPassword: (state, action) => {
-      state.password = action.payload;
-    },
-    setPasswordError: (state, action) => {
-      state.passwordError = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -84,6 +65,8 @@ const authSlice = createSlice({
       .addCase(userSignIn.fulfilled, (state, action) => {
         localStorage.setItem("token", action.payload.token);
         state.isLoggedIn = true;
+        state.isAdmin = action.payload.isAdmin;
+        state.email = action.payload.email;
       })
       .addCase(userSignIn.rejected, (state, action) => {
         if (!action.payload) {
@@ -95,7 +78,10 @@ const authSlice = createSlice({
         }
       })
       .addCase(userSignUp.fulfilled, (state, action) => {
+        console.log(action.payload);
         state.isLoggedIn = true;
+        state.isAdmin = action.payload.isAdmin;
+        state.email = action.payload.email;
       })
       .addCase(userSignUp.rejected, (state, action) => {
         // sign up failed
