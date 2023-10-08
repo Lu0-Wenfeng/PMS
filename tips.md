@@ -18,3 +18,8 @@ userData: {userId: null, userType: 'regular'}
 1. 现在的业务逻辑是：登陆后中间件会传回userType 在redux中使用[userType, setUserType] = useState("regular")记录全局状态 对于admin专用的按钮进行条件渲染即可
 
 2. 我将注册成为管理员的逻辑变更为：点击checkbox后验证Admin password是否和预设的静态密码相同 验证成功则获得管理员权限 预设的静态密码为魔兽争霸3的无敌作弊码：WHOSYOURDADDY
+
+
+//
+1. error.js的导航添加完毕
+2.                                                                                    

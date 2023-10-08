@@ -19,7 +19,6 @@ import {
   setCurrentPage,
   setSortOption,
 } from "../store/productSlice";
-// const PRODUCTS_PER_ROW = 5;
 
 const AllProductsPage = () => {
   const dispatch = useDispatch();
@@ -40,7 +39,6 @@ const AllProductsPage = () => {
   };
 
   useEffect(() => {
-    //确保组件未挂载时才调用 setProducts
     if (productList.length === 0) {
       dispatch(fetchAllProducts());
     }
@@ -93,7 +91,7 @@ const AllProductsPage = () => {
           variant={i === currentPage ? "solid" : "outline"}
           size="sm"
           onClick={() => handlePageChange(i)}
-          ml="2"
+          ml={{ base: 2, md: 2 }}
         >
           {i}
         </Button>
@@ -104,16 +102,23 @@ const AllProductsPage = () => {
   };
 
   return (
-    <Box p="4" textColor="black">
-      <Flex justifyContent="space-between" alignItems="center" mb="4">
-        <Heading as="h1">Products List Page</Heading>
+    <Box p={{ base: 2, md: 4 }} textColor="black">
+      <Flex
+        direction={{ base: "column", md: "row" }}
+        align="center"
+        justify="space-between"
+        mb={{ base: 2, md: 4 }}
+      >
+        <Heading as="h1" mb={{ base: 2, md: 0 }}>
+          Products List Page
+        </Heading>
         <Flex>
           <Select
             variant="outline"
             size="sm"
             onChange={(e) => handleSortChange(e.target.value)}
             value={sortOption}
-            mr="2"
+            mr={{ base: 2, md: 2 }}
             {...selectStyles}
           >
             <option value="lastAdded">Last Added</option>
@@ -140,7 +145,7 @@ const AllProductsPage = () => {
               <Box
                 key={product._id}
                 width={{ base: "100%", md: "50%", lg: "20%" }}
-                p="2"
+                p={{ base: 2, md: 2 }}
               >
                 <ChakraLink
                   as={RouterLink}
@@ -161,13 +166,15 @@ const AllProductsPage = () => {
                   </Text>
                 </ChakraLink>
 
-                <HStack>
+                <HStack mt="2" spacing={{ base: 2, md: 0 }}>
                   <Button bg={"purple"}>这里放数量</Button>
                   <ChakraLink
                     as={RouterLink}
                     to={`/edit-product/${product._id}`}
                   >
-                    <Button colorScheme="orange">Edit</Button>
+                    <Button colorScheme="orange" size="sm">
+                      Edit
+                    </Button>
                   </ChakraLink>
                 </HStack>
               </Box>
@@ -179,16 +186,13 @@ const AllProductsPage = () => {
             justifyContent="center"
             alignItems="center"
           >
-            {/* <Text>
-              Page {currentPage} of {totalPages}
-            </Text> */}
             <Button
               colorScheme="blue.700"
               variant="outline"
               size="sm"
               onClick={() => handlePageChange(currentPage - 1)}
               isDisabled={currentPage === 1}
-              ml="2"
+              ml={{ base: 2, md: 2 }}
             >
               «
             </Button>
@@ -201,7 +205,7 @@ const AllProductsPage = () => {
               size="sm"
               onClick={() => handlePageChange(currentPage + 1)}
               isDisabled={currentPage === totalPages}
-              ml="2"
+              ml={{ base: 2, md: 2 }}
             >
               »
             </Button>

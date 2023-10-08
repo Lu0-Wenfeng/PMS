@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   Box,
   Heading,
@@ -15,9 +15,7 @@ import {
   Image,
   Textarea,
 } from "@chakra-ui/react";
-import {
-  createProduct,
-} from "../store/productSlice";
+import { createProduct } from "../store/productSlice";
 
 const CreateProductPage = () => {
   const dispatch = useDispatch();
@@ -28,7 +26,6 @@ const CreateProductPage = () => {
   const [productCategory, setProductCategory] = useState("");
   const [productInStockQuantity, setProductInStockQuantity] = useState(0);
   const [productImageURL, setProductImageURL] = useState("");
-  const [productCreated, setProductCreated] = useState(false);
 
   const inputStyles = {
     mt: "2",
@@ -44,15 +41,7 @@ const CreateProductPage = () => {
   };
 
   const handleCreateProduct = async () => {
-    if (
-      !productName ||
-      !productPrice ||
-      !productDescription ||
-      !productCategory ||
-      !productInStockQuantity
-    ) {
-      console.error("All fields are required");
-    }
+    // Validation logic here...
 
     const newProduct = {
       name: productName,
@@ -62,36 +51,19 @@ const CreateProductPage = () => {
       inStockQuantity: productInStockQuantity,
       productImageURL: productImageURL,
     };
+
     try {
       await dispatch(createProduct(newProduct)).unwrap();
       alert("Product has been created successfully.");
       navigate("/all-products");
-      setProductCreated(false);
     } catch (error) {
       console.error("Error when creating a product", error.message);
+      navigate('/error');
     }
   };
 
-  // const handleDrop = (event) => {
-  //   event.preventDefault();
-
-  //   const file = event.dataTransfer.files[0];
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     reader.onloadend = () => {
-  //       const imageUrl = reader.result;
-  //       setProductImageUrl(imageUrl);
-  //     };
-  //     reader.readAsDataURL(file);
-  //   }
-  // };
-
-  // const handleDragOver = (event) => {
-  //   event.preventDefault();
-  // };
-
   return (
-    <Box p="4" mr="200" ml="200" maxW="600px" mx="auto" textColor="black">
+    <Box p={{ base: 2, md: 4 }} maxW="600px" mx="auto" textColor="black">
       <Heading as="h1" mb="4">
         Create Product
       </Heading>
@@ -118,7 +90,7 @@ const CreateProductPage = () => {
             />
           </FormControl>
 
-          <HStack spacing="20" align="stretch" justify="center">
+          <HStack spacing={{ base: 2, md: 20 }} justify="center" w="100%">
             <FormControl>
               <FormLabel>Price</FormLabel>
               <Input
@@ -130,12 +102,13 @@ const CreateProductPage = () => {
               />
             </FormControl>
 
-            <FormControl w="200%">
+            <FormControl>
               <FormLabel>Category</FormLabel>
               <Select
                 value={productCategory}
                 onChange={(e) => setProductCategory(e.target.value)}
                 placeholder="Select product category"
+                {...inputStyles}
               >
                 <option value="electronics">Electronics</option>
                 <option value="clothing">Clothing</option>
@@ -145,21 +118,19 @@ const CreateProductPage = () => {
             </FormControl>
           </HStack>
 
-          <HStack spacing="20" align="stretch" justify="center">
+          <HStack spacing={{ base: 2, md: 20 }} justify="center" w="100%">
             <FormControl>
               <FormLabel>In Stock Quantity</FormLabel>
               <Input
                 type="number"
                 value={productInStockQuantity}
-                onChange={(e) =>
-                  setProductInStockQuantity(e.target.value)
-                }
+                onChange={(e) => setProductInStockQuantity(e.target.value)}
                 {...inputStyles}
                 placeholder="Enter in stock quantity"
               />
             </FormControl>
 
-            <FormControl w="200%">
+            <FormControl>
               <FormLabel>Add Image Link</FormLabel>
               <Input
                 type="text"
@@ -170,23 +141,6 @@ const CreateProductPage = () => {
               />
             </FormControl>
           </HStack>
-
-          {/* 这里或许可以添加一个Dropbox 直接拖动图片进去 但是我还没想好排版到哪里
-         <FormControl>
-        <Box
-              p="4"
-              border="2px"
-              borderColor="gray.200"
-              borderRadius="md"
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-        >
-
-          <Heading as="h3" size="sm" mb="2">
-            Drag and drop an image here
-          </Heading>
-        </Box>
-        </FormControl> */}
 
           <Box p="4" border="2px" borderColor="gray.200" borderRadius="md">
             <Image

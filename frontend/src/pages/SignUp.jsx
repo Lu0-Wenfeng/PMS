@@ -9,7 +9,7 @@ import {
   Checkbox,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import MyCard from "../components/MyCard";
 import { userSignUp, setIsAdmin } from "../store/authSlice";

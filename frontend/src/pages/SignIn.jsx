@@ -102,6 +102,7 @@ const SignIn = () => {
         setPasswordError(error.message);
       } else {
         console.error("Error logging in", error.message);
+        navigate('./error');
       }
     }
   };
