@@ -33,7 +33,7 @@ exports.createProduct = async (req, res) => {
       productImageUrl: productImageUrl,
     });
     await newProduct.save();
-    res.status(201).json({ message: "Product created successfully" });
+    res.status(201).json({ message: "Product created successfully", product: newProduct });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
@@ -64,6 +64,7 @@ exports.productDeatails = async (req, res) => {
   }
 };
 
+// 当数据量增大时，应该按页码获取商品信息，目前先这样吧
 exports.getAllProducts = async (req, res) => {
   try {
     const userData = req.userData;
@@ -80,13 +81,6 @@ exports.getAllProducts = async (req, res) => {
 
 exports.editProduct = async (req, res) => {
   try {
-    // Check if the user is an admin
-    if (req.userData.userType !== 'admin') {
-      return res.status(403).json({
-        message: 'Permission denied. Only admins can create products.',
-      });
-    }
-
     const { id } = req.params;
     const {
       name,
@@ -121,12 +115,6 @@ exports.editProduct = async (req, res) => {
 
 exports.deleteProduct = async (req, res) => {
   try {
-    // Check if the user is an admin
-    if (req.userData.userType !== 'admin') {
-      return res.status(403).json({
-        message: 'Permission denied. Only admins can create products.',
-      });
-    }
 
     const { id } = req.params;
     const product = await Product.findById(id);
