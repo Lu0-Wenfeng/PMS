@@ -20,13 +20,13 @@ router.post("/create-product", authenticateUser, createProduct);
 router.get("/all-products", authenticateUser, getAllProducts);
 router.get("/all-products/:id", productDeatails);
 router.put("/edit-product/:id", authenticateUser, editProduct);
-router.delete('./delete-product/:id', authenticateUser, deleteProduct);
+router.delete('/delete-product/:id', authenticateUser, deleteProduct);
 
 // Cart Flow
-router.get("./cart", authenticateUser, myCart);
-router.post("./all-products/add-product/:productId", authenticateUser, addToCart)
-router.delete('./cart/delete/:productId', authenticateUser, deleteProductfromCart);
-router.put('./cart/update-quantity/:productId', authenticateUser, updateCartItemQuantity )
+router.get("/cart", authenticateUser, myCart);
+router.post("/all-products/add-product/:productId", authenticateUser, addToCart)
+router.delete('/cart/delete/:productId', authenticateUser, deleteProductfromCart);
+router.put('/cart/update-quantity/:productId', authenticateUser, updateCartItemQuantity )
 
 // Error Handling
 router.get("/error", () => errorHandler);
