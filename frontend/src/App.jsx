@@ -24,13 +24,13 @@ function App() {
   return (
     <Provider store={store}>
       <Router>
-        <Grid
+      <Grid
           templateAreas={`"header" "main" "footer"`}
-          gridTemplateRows={"64px 1fr 85px"}
+          gridTemplateRows={"auto 1fr 85px"}  
           gridTemplateColumns={"100%"}
-          h="100vh"
+          autoFlow={"column"}
         >
-          <GridItem bg="#111827" area={"header"}>
+          <GridItem bg="#111827" area={"header"} >
             <Header onSearch={(searchText) => setSearchInput(searchText)} />
           </GridItem>
 
@@ -48,6 +48,7 @@ function App() {
               <Route path="/create-product" element={<CreateProductPage />} />
               <Route path="/all-products" element={<AllProductsPage />} />
               <Route path="/all-products/:id" element={<ProductDetailPage />} />
+              <Route path="/search-product/:query" element={<AllProductsPage/>} />
               <Route path="/edit-product/:id" element={<EditProductPage />} />
             </Routes>
           </GridItem>

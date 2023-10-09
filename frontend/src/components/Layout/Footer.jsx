@@ -24,18 +24,18 @@ const Footer = () => {
           <ImFacebook2 />
         </HStack>
         <HStack>
-          <Text>Contact us</Text>
+          <Text color={"white"}>Contact us</Text>
           <Spacer />
-          <Text>Private Policy</Text>
+          <Text color={"white"}>Private Policy</Text>
         </HStack>
-        <Text>©2023, All Rights Reserved</Text>
+        <Text color={"white"}>©2023, All Rights Reserved</Text>
       </VStack>
     );
   } else {
     return (
       <Flex h="100%" px="64px" pb="8px" align="center" justify="space-between">
         <Center w="auto">
-          <Text>©2023, All Rights Reserved</Text>
+          <Text color={"white"}>©2023, All Rights Reserved</Text>
         </Center>
         <Center w="auto">
           <HStack>
@@ -48,11 +48,11 @@ const Footer = () => {
         </Center>
         <Center w="auto">
           <HStack>
-            <Text>Contact us</Text>
+            <Text color={"white"}>Contact us</Text>
             <Spacer />
-            <Text>Private Policy</Text>
+            <Text color={"white"}>Private Policy</Text>
             <Spacer />
-            <Text>Help</Text>
+            <Text color={"white"}>Help</Text>
           </HStack>
         </Center>
       </Flex>

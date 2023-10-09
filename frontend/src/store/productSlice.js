@@ -128,6 +128,27 @@ export const deleteProduct = createAsyncThunk(
   }
 );
 
+export const searchProducts = createAsyncThunk(
+  'products/searchProducts',
+  async (query, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(
+        `http://localhost:3000/search-product/${query}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response.data);
+      return response.data.searchResults;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 const productSlice = createSlice({
   name: "products",
   initialState,
@@ -186,6 +207,13 @@ const productSlice = createSlice({
       })
       .addCase(deleteProduct.rejected, (state, action) => {
         console.error("Product deletion failed", action.payload);
+      })
+      .addCase(searchProducts.fulfilled, (state, action) => {
+        state.productList = action.payload;
+        state.totalPages = Math.ceil(state.productList.length / ITEMS_PER_PAGE);
+      })
+      .addCase(searchProducts.rejected, (state, action) => {
+        console.error('Search failed', action.error);
       });
   },
 });

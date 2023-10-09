@@ -39,6 +39,7 @@ const AllProductsPage = () => {
     borderColor: "gray.300",
   };
 
+
   useEffect(() => {
     if (productList.length === 0) {
       dispatch(fetchAllProducts());
@@ -182,10 +183,10 @@ const AllProductsPage = () => {
                   <Image
                     src={product.productImageUrl || noImage}
                     alt={product.name}
-                    width="230px"
-                    height="190px"
+                    width="200px"
+                    height="150px"
                   />
-                  <Text mt="2" fontWeight="medium" color={"gray"}>
+                  <Text mt="2" fontWeight="medium" color={"gray"}  style={{ maxHeight: '2em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'  }}>
                     {product.name}
                   </Text>
                   <Text>

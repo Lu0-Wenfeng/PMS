@@ -6,6 +6,7 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerOverlay,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { BsFillPersonFill } from "react-icons/bs";
 
@@ -18,6 +19,7 @@ const Profile = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const isMobile = useBreakpointValue({ base: true, md: false });
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -39,7 +41,7 @@ const Profile = () => {
         leftIcon={<BsFillPersonFill />}
         variant="solid"
       >
-        {isLoggedIn ? "Sign Out" : "Sign In"}
+        {isMobile ? null : isLoggedIn ? "Sign Out" : "Sign In"}
       </Button>
       <Drawer
         isOpen={isDrawerOpen}
@@ -86,3 +88,4 @@ const Profile = () => {
 };
 
 export default Profile;
+

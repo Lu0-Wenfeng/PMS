@@ -120,3 +120,19 @@ exports.deleteProduct = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+exports.searchProduct = async (req, res) => {
+  const { query } = req.params;
+
+  try {
+    const searchResults = await Product.find({
+      name: { $regex: new RegExp(query, 'i') }, // Case-insensitive search
+    });
+    console.log(searchResults);
+
+    res.status(200).json({ searchResults });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};

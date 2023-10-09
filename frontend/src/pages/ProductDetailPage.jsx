@@ -38,7 +38,7 @@ const ProductDetailPage = () => {
             alt={currentProduct?.name}
             width="100%"
             maxH={{ base: "300px", md: "500px" }}
-            objectFit="cover"
+            objectFit="contain"
           />
 
           <VStack p={{ base: 4, md: 10 }} align="start">

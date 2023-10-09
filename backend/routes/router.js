@@ -5,7 +5,7 @@ const {
   signin: signIn,
   updatePassword,
 } = require("../controllers/auth");
-const { createProduct, getAllProducts, productDeatails, editProduct, deleteProduct } = require("../controllers/productControllers");
+const { createProduct, searchProduct, getAllProducts, productDeatails, editProduct, deleteProduct } = require("../controllers/productControllers");
 const {authenticateUser} = require('../middlewares/authenticateUser');
 const {myCart, addToCart, deleteProductfromCart, updateCartItemQuantity } = require('../controllers/cartControllers')
 
@@ -21,6 +21,7 @@ router.get("/all-products", authenticateUser, getAllProducts);
 router.get("/all-products/:id", productDeatails);
 router.put("/edit-product/:id", authenticateUser, editProduct);
 router.delete('/delete-product/:id', authenticateUser, deleteProduct);
+router.get("/search-product/:query", searchProduct );
 
 // Cart Flow
 router.get("/cart", authenticateUser, myCart);

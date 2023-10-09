@@ -1,8 +1,4 @@
-import {
-  Flex,
-  HStack,
-  useBreakpointValue,
-} from "@chakra-ui/react";
+import { Flex, HStack, Box, useBreakpointValue } from "@chakra-ui/react";
 import React from "react";
 import Title from "./Title";
 import SearchBar from "../SearchBar";
@@ -13,35 +9,48 @@ const Header = (onSearch) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
 
   return (
-    <Flex
+    <Box
       px="25"
       pt="2"
-      align="center"
-      justify="space-between"
-      flexDirection={isMobile ? "column" : "row"}
+      bg="black"
+      height={isMobile ? "100px" : "70px"}  
     >
-      {isMobile ? (
-        <>
-          <Flex justify="space-between" align="center">
+      <Flex
+        align="center"
+        justify="space-between"
+        flexDirection={isMobile ? "column" : "row"}
+      >
+        {isMobile ? (
+          <>
+            <Flex>
+              <Title mobile={isMobile} />
+              <HStack spacing="24px">
+                <Profile />
+                <Cart />
+              </HStack>
+            </Flex>
+            <Flex align="flex-end"
+            justify="center"
+              width="100%"
+              mt="auto" 
+            >
+              <SearchBar onSearch={onSearch} />
+            </Flex>
+          </>
+        ) : (
+          <>
             <Title mobile={isMobile} />
+            <Flex ml="4" justify="center" width="100%">
+              <SearchBar onSearch={onSearch} />
+            </Flex>
             <HStack spacing="24px">
               <Profile />
               <Cart />
             </HStack>
-          </Flex>
-          <SearchBar onSearch={onSearch} />
-        </>
-      ) : (
-        <>
-          <Title mobile={isMobile} />
-          <SearchBar onSearch={onSearch} />
-          <HStack spacing="24px">
-            <Profile />
-            <Cart />
-          </HStack>
-        </>
-      )}
-    </Flex>
+          </>
+        )}
+      </Flex>
+    </Box>
   );
 };
 
