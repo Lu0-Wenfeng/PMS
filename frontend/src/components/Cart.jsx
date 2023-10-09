@@ -13,10 +13,12 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { userLoggedIn } from "../store/authSlice";
+import { fetchCartItems } from "../store/cartSlice";
 
 const Cart = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const dispatch = useDispatch();
+  const cartItems = useSelector((state) => state.cart.items);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   useEffect(() => {
@@ -26,6 +28,12 @@ const Cart = () => {
     }
   }, [dispatch]);
 
+  useEffect(() => {
+    if (isLoggedIn) {
+      dispatch(fetchCartItems());
+    }
+  }, [isLoggedIn, dispatch]);
+
   return (
     <>
       <Button
@@ -33,7 +41,11 @@ const Cart = () => {
         leftIcon={<BsCart3 />}
         variant="solid"
       >
-        $ 0.00
+        {"$ " +
+          cartItems.reduce(
+            (acc, item) => acc + item.productPrice * item.productQuantity,
+            0
+          )}
       </Button>
       <Drawer
         isOpen={isDrawerOpen}
@@ -47,27 +59,21 @@ const Cart = () => {
             {isLoggedIn ? "Cart" : "You haven't signed in"}
           </DrawerHeader>
           <DrawerBody>
-            {isLoggedIn ? (
-              <>
-                <Link to="/update-pwd">
-                  <Button mt={4} onClick={() => setIsDrawerOpen(false)}>
-                    Update Password
-                  </Button>
-                </Link>
-                
-              </>
-            ) : (
-              <>
-                <Link to="/sign-in">
-                  <Button onClick={() => setIsDrawerOpen(false)}>Login</Button>
-                </Link>
-                <Link to="/sign-up">
-                  <Button onClick={() => setIsDrawerOpen(false)}>
-                    Sign Up
-                  </Button>
-                </Link>
-              </>
-            )}
+            {cartItems.length === 0
+              ? "Your cart is empty"
+              : cartItems.map((item) => (
+                  <Box key={item.productId}>
+                    <Image src={item.productImageUrl} alt={item.productName} />
+                    <Text>{item.productName}</Text>
+                    <Text>
+                      Total: ${item.productPrice * item.productQuantity}
+                    </Text>
+                    <Button>-</Button>
+                    <Input value={item.productQuantity} readOnly />
+                    <Button>+</Button>
+                    <Button>Remove</Button>
+                  </Box>
+                ))}
           </DrawerBody>
         </DrawerContent>
       </Drawer>

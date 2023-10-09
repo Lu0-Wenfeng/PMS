@@ -10,7 +10,7 @@ exports.myCart = async (req, res) => {
     );
 
     if (!cart) {
-      return res.status(404).json({ message: "Cart not found" });
+      return res.status(200).json({ message: "Empty Cart", items: [] });
     }
 
     const productsInCart = cart.products.map((item) => ({
@@ -29,6 +29,11 @@ exports.myCart = async (req, res) => {
   }
 };
 
+// TODO: 把addCart和updateQuantity合并：
+// 前端flow：点击按钮 -> Redux状态更新 -> debouncer发送请求
+// addToCart和updateQuantity作用差不多，可用一个函数表达，但加上一个判断：后端接到请求前有没有这个product，有就put，没有就post
+// Redux的reducers也要跟着修改
+
 exports.addToCart = async (req, res) => {
   const { productId } = req.params;
   const userId = req.userData.userId;
@@ -36,42 +41,42 @@ exports.addToCart = async (req, res) => {
 
   try {
     // check valid input
-    if (!Number.isInteger(quantity) || quantity < 1) {
-      return res.status(400).json({ message: "Invalid quantity" });
-    }
 
-    const cart = await Cart.findOne({ user: userId });
-
-    if (!cart) {
-      return res.status(404).json({ message: "Cart not found" });
-    }
+    const cart = (await Cart.findOne({ user: userId })) || {};
 
     // Find the product
     const product = await Product.findById(productId);
+    const newAddedProduct = {
+      productId: product.product._id,
+      productName: product.product.name,
+      productPrice: product.product.price,
+      productImageUrl: product.product.productImageUrl,
+      productQuantity: 1,
+    };
+    cart.products.push(newAddedProduct);
 
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
-    }
+    // 留给updateQuantity做
+    // if (quantity > product.inStockQuantity) {
+    //   return res.status(400).json({ message: "Not enough stock" });
+    // }
 
-    if (quantity > product.inStockQuantity) {
-      return res.status(400).json({ message: "Not enough stock" });
-    }
+    // // Check if the product is already in the cart, if yes, update the quantity
+    // const existingProductIndex = cart.products.findIndex((item) =>
+    //   item.product.equals(productId)
+    // );
 
-    // Check if the product is already in the cart, if yes, update the quantity
-    const existingProductIndex = cart.products.findIndex((item) =>
-      item.product.equals(productId)
-    );
-
-    if (existingProductIndex !== -1) {
-      cart.products[existingProductIndex].quantity += quantity;
-    } else {
-      // Add the new product to the cart
-      cart.products.push({ product: productId, quantity });
-    }
+    // if (existingProductIndex !== -1) {
+    //   cart.products[existingProductIndex].quantity += quantity;
+    // } else {
+    //   // Add the new product to the cart
+    //   cart.products.push({ product: productId, quantity });
+    // }
 
     await cart.save();
 
-    res.status(200).json({ message: "Product added to cart successfully" });
+    res
+      .status(200)
+      .json({ message: "Product added to cart successfully", newAddedProduct });
   } catch (error) {
     console.error("Error in addToCart function:", error);
     res.status(500).json({ message: "Server error" });
@@ -98,11 +103,11 @@ exports.deleteProductfromCart = async (req, res) => {
     }
 
     // Remove the product from the cart
-    cart.products.splice(productIndex, 1);
+    const removedProduct = cart.products.splice(productIndex, 1);
 
     await cart.save();
 
-    res.status(200).json({ message: "Product removed from cart successfully" });
+    res.status(200).json({ message: "Product removed from cart successfully", removedProduct });
   } catch (error) {
     console.error("Error in deleteFromCart function:", error);
     res.status(500).json({ message: "Server error" });
@@ -111,14 +116,8 @@ exports.deleteProductfromCart = async (req, res) => {
 
 exports.updateCartItemQuantity = async (req, res) => {
   try {
-    const { productId } = req.params;
-    const { quantity } = req.body;
+    const { productId, quantity } = req.params;
     const userId = req.userData.userId;
-
-    // Check if the quantity is a positive integer
-    if (!Number.isInteger(quantity) || quantity < 1) {
-      return res.status(400).json({ message: "Invalid quantity" });
-    }
 
     // Find the user's cart
     const cart = await Cart.findOne({ user: userId });
@@ -145,11 +144,9 @@ exports.updateCartItemQuantity = async (req, res) => {
 
     // Check if the requested quantity is greater than the available stock
     if (quantity > product.inStockQuantity) {
-      return res
-        .status(400)
-        .json({
-          message: "Not enough stock available for the requested quantity",
-        });
+      return res.status(400).json({
+        message: "Not enough stock available for the requested quantity",
+      });
     }
 
     // Update the quantity of the product in the cart

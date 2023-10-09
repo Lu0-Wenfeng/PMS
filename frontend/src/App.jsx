@@ -1,6 +1,6 @@
 import { Grid, GridItem } from "@chakra-ui/react";
 import { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Provider } from "react-redux";
 
 import Footer from "./components/Layout/Footer";
@@ -14,7 +14,7 @@ import CreateProductPage from "./pages/CreateProductPage";
 import AllProductsPage from "./pages/AllProductsPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import EditProductPage from "./pages/EditProduct";
-import ErrorPage from './pages/ErrorPage';
+import ErrorPage from "./pages/ErrorPage";
 
 import store from "./store/configureStore";
 
@@ -36,7 +36,10 @@ function App() {
 
           <GridItem bg="white" area={"main"}>
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route
+                path="/"
+                element={<Navigate to="/all-products" replace />}
+              />
               <Route path="/error" element={<ErrorPage />} />
               <Route path="/sign-in" element={<SignIn />} />
               <Route path="/sign-up" element={<SignUp />} />

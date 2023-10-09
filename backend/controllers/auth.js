@@ -29,7 +29,6 @@ exports.signup = async (req, res) => {
 
     res.status(201).json({ message: "Signup successful", isAdmin: isAdmin, email: email });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 };

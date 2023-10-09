@@ -7,7 +7,9 @@ import {
   Flex,
   Image,
   Text,
+  Input,
   Button,
+  ButtonGroup,
   Link as ChakraLink,
   Select,
   HStack,
@@ -19,6 +21,7 @@ import {
   setCurrentPage,
   setSortOption,
 } from "../store/productSlice";
+import { addToCart } from "../store/cartSlice";
 
 const AllProductsPage = () => {
   const dispatch = useDispatch();
@@ -28,7 +31,7 @@ const AllProductsPage = () => {
   const isAdmin = useSelector((state) => state.auth.isAdmin);
   const sortOption = useSelector((state) => state.products.sortOption);
   const [sortedProducts, setSortedProducts] = useState([]);
-  const [userType, setUserType] = useState("regular");
+  const [productsCount, setProductsCount] = useState({});
 
   const selectStyles = {
     variant: "outline",
@@ -99,6 +102,32 @@ const AllProductsPage = () => {
     return pageButtons;
   };
 
+  const handleIncrease = (productId) => {
+    setProductsCount((prevCounts) => ({
+      ...prevCounts,
+      [productId]: (prevCounts[productId] || 0) + 1,
+    }));
+    if (productsCount[productId] === 1) {
+      // dispatch(addToCart());
+    }
+  };
+
+  const handleDecrease = (productId) => {
+    setProductsCount((prevCounts) => {
+      if (prevCounts[productId] > 1) {
+        return {
+          ...prevCounts,
+          [productId]: prevCounts[productId] - 1,
+        };
+      } else if (prevCounts[productId] === 1) {
+        const newCounts = { ...prevCounts };
+        delete newCounts[productId];
+        return newCounts;
+      }
+      return prevCounts;
+    });
+  };
+
   return (
     <Box p={{ base: 2, md: 4 }} textColor="black">
       <Flex
@@ -165,19 +194,45 @@ const AllProductsPage = () => {
                 </ChakraLink>
 
                 <HStack mt="2" spacing={{ base: 2, md: 5 }}>
-                  <Text bg={"skyblue"}>
-                    {product.inStockQuantity > 0
-                      ? `Quantity: ${product.inStockQuantity}`
-                      : "Out of Stock"}
-                  </Text>
-                  <ChakraLink
+                  {productsCount[product._id] &&
+                  productsCount[product._id] > 0 ? (
+                    <ButtonGroup colorScheme="orange" size="sm" isAttached>
+                      <Button onClick={() => handleDecrease(product._id)}>
+                        -
+                      </Button>
+                      <Button
+                        value={productsCount[product._id]}
+                        onClick={() => {}}
+                        _hover={{
+                          transform: "none",
+                          boxShadow: "none",
+                        }}
+                        _focus={{ boxShadow: "none" }}
+                        _active={{ bg: "initial", transform: "none" }}
+                      >
+                        {productsCount[product._id]}
+                      </Button>
+                      <Button onClick={() => handleIncrease(product._id)}>
+                        +
+                      </Button>
+                    </ButtonGroup>
+                  ) : (
+                    <Button
+                      onClick={() => handleIncrease(product._id)}
+                      colorScheme="orange"
+                      size="sm"
+                    >
+                      Add to Cart
+                    </Button>
+                  )}
+                  {isAdmin && <ChakraLink
                     as={RouterLink}
                     to={`/edit-product/${product._id}`}
                   >
                     <Button colorScheme="orange" size="sm">
                       Edit
                     </Button>
-                  </ChakraLink>
+                  </ChakraLink>}
                 </HStack>
               </Box>
             ))}
