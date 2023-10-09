@@ -104,6 +104,30 @@ export const updateProduct = createAsyncThunk(
   }
 );
 
+export const deleteProduct = createAsyncThunk(
+  "products/deleteProduct",
+  async (id, { rejectWithValue }) => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/delete-product/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        return id;
+      } else {
+        console.log(response.data);
+      }
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 const productSlice = createSlice({
   name: "products",
   initialState,
@@ -134,7 +158,7 @@ const productSlice = createSlice({
       })
       .addCase(fetchProductDetails.fulfilled, (state, action) => {
         console.log("Product fetched successfully", action.payload);
-        state.currentProduct = action.payload;
+        state.currentProduct = { ...action.payload };
       })
       .addCase(fetchProductDetails.rejected, (state, action) => {
         console.error("Fetching product failed", action.error);
@@ -145,12 +169,23 @@ const productSlice = createSlice({
           (product) => product._id === id
         );
         if (index !== -1) {
-          state.productList[index] = {...updatedProduct};
+          state.productList[index] = { ...updatedProduct };
         }
         console.log("Product updated, ", message);
       })
       .addCase(updateProduct.rejected, (state, action) => {
         console.error("Updating product failed", action.error);
+      })
+      .addCase(deleteProduct.fulfilled, (state, action) => {
+        state.productList = state.productList.filter(
+          (product) => product._id !== action.payload
+        );
+        state.totalPages = Math.ceil(state.productList.length / ITEMS_PER_PAGE);
+        state.currentProduct = null;
+        console.log("Product deleted successfully");
+      })
+      .addCase(deleteProduct.rejected, (state, action) => {
+        console.error("Product deletion failed", action.payload);
       });
   },
 });

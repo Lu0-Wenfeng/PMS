@@ -9,38 +9,22 @@ import {
   Image,
   VStack,
   Button,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link as RouterLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import { fetchProductDetails } from "../store/productSlice";
 
 const ProductDetailPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isAdmin = useSelector((state) => state.auth.isAdmin);
-  const [productDetails, setProductDetails] = useState({});
   const { id } = useParams();
+  const currentProduct = useSelector((state) => state.products.currentProduct);
 
   useEffect(() => {
-    const fetchProductDetails = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3000/all-products/${id}`
-        );
-        if (response.data) {
-          const productDetails = response.data;
-          setProductDetails(productDetails);
-        } else {
-          console.error("Failed to fetch product details");
-          navigate("./error");
-        }
-      } catch (error) {
-        console.error("Error during product details fetch:", error);
-        navigate("./error");
-      }
-    };
-
-    fetchProductDetails();
-  }, [id, navigate]);
+    dispatch(fetchProductDetails(id));
+  }, [dispatch]);
 
   return (
     <Box p={{ base: 2, md: 4 }} textColor="black">
@@ -50,8 +34,8 @@ const ProductDetailPage = () => {
       <Box>
         <VStack align="stretch" spacing={{ base: 4, md: 8 }}>
           <Image
-            src={productDetails.productImageUrl || noImage}
-            alt={productDetails.name}
+            src={currentProduct?.productImageUrl || noImage}
+            alt={currentProduct?.name}
             width="100%"
             maxH={{ base: "300px", md: "500px" }}
             objectFit="cover"
@@ -59,7 +43,7 @@ const ProductDetailPage = () => {
 
           <VStack p={{ base: 4, md: 10 }} align="start">
             <Text fontWeight="thin" fontSize={{ base: "md", md: "lg" }}>
-              {productDetails.category}
+              {currentProduct?.category}
             </Text>
 
             <Text
@@ -67,7 +51,7 @@ const ProductDetailPage = () => {
               fontSize={{ base: "2xl", md: "4xl" }}
               textColor={"gray"}
             >
-              {productDetails.name}
+              {currentProduct?.name}
             </Text>
 
             <HStack
@@ -76,27 +60,29 @@ const ProductDetailPage = () => {
               alignSelf="start"
             >
               <Text fontSize={{ base: "2xl", md: "4xl" }}>
-                <strong>${productDetails.price}</strong>
+                <strong>${currentProduct?.price}</strong>
               </Text>
 
               <Text
                 fontSize={{ base: "sm", md: "md" }}
-                color={productDetails.inStockQuantity > 0 ? "black" : "deepred"}
+                color={
+                  currentProduct?.inStockQuantity > 0 ? "black" : "deepred"
+                }
                 border="1px solid #000"
                 background={
-                  productDetails.inStockQuantity > 0 ? "tomato" : "lightcoral"
+                  currentProduct?.inStockQuantity > 0 ? "tomato" : "lightcoral"
                 }
                 borderRadius="8px"
                 padding="5px"
               >
-                {productDetails.inStockQuantity > 0
-                  ? `In Stock: ${productDetails.inStockQuantity}`
+                {currentProduct?.inStockQuantity > 0
+                  ? `In Stock: ${currentProduct?.inStockQuantity}`
                   : "Out Of Stock"}
               </Text>
             </HStack>
 
             <Text fontWeight="normal" fontSize={{ base: "sm", md: "md" }}>
-              {productDetails.description}
+              {currentProduct?.description}
             </Text>
 
             <HStack spacing={{ base: 2, md: 4 }}>
@@ -105,9 +91,14 @@ const ProductDetailPage = () => {
               </Button>
 
               {isAdmin && (
-                <Button colorScheme={"purple"} size={{ base: "sm", md: "md" }}>
-                  Edit
-                </Button>
+                <ChakraLink as={RouterLink} to={`/edit-product/${id}`}>
+                  <Button
+                    colorScheme={"purple"}
+                    size={{ base: "sm", md: "md" }}
+                  >
+                    Edit
+                  </Button>
+                </ChakraLink>
               )}
             </HStack>
           </VStack>

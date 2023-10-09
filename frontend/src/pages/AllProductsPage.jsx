@@ -164,8 +164,12 @@ const AllProductsPage = () => {
                   </Text>
                 </ChakraLink>
 
-                <HStack mt="2" spacing={{ base: 2, md: 0 }}>
-                  <Button bg={"purple"}>这里放数量</Button>
+                <HStack mt="2" spacing={{ base: 2, md: 5 }}>
+                  <Text bg={"skyblue"}>
+                    {product.inStockQuantity > 0
+                      ? `Quantity: ${product.inStockQuantity}`
+                      : "Out of Stock"}
+                  </Text>
                   <ChakraLink
                     as={RouterLink}
                     to={`/edit-product/${product._id}`}
