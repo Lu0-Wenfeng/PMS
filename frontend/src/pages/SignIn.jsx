@@ -6,15 +6,22 @@ import {
   InputRightElement,
   Link as ChakraLink,
   Text,
+  useDisclosure,
+  Modal,
+  ModalCloseButton,
+  ModalContent,
+  ModalOverlay,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
-import MyCard from "../components/MyCard";
 import { userSignIn, setIsAdmin } from "../store/authSlice";
+import Prompt from "../components/Prompt";
+import MyCard from "../components/MyCard";
 
 const SignIn = () => {
-  const [show, setShow] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
   const [password, setPassword] = useState("");
@@ -44,7 +51,7 @@ const SignIn = () => {
     },
   };
 
-  const handleClick = () => setShow(!show);
+  const handleClick = () => setShowPassword(!showPassword);
 
   const onEmailBlur = () => {
     if (!email) {
@@ -89,12 +96,11 @@ const SignIn = () => {
     }
 
     try {
-      const { token, userType } = await dispatch(
+      const { userType } = await dispatch(
         userSignIn({ email, password })
       ).unwrap();
       userType === "admin" && dispatch(setIsAdmin(true));
-      alert("Login Successful");
-      navigate("/all-products");
+      onOpen();
     } catch (error) {
       if (error.message === "User Not exist") {
         setEmailError(error.message);
@@ -102,7 +108,7 @@ const SignIn = () => {
         setPasswordError(error.message);
       } else {
         console.error("Error logging in", error.message);
-        navigate('./error');
+        navigate("./error");
       }
     }
   };
@@ -114,76 +120,98 @@ const SignIn = () => {
   };
 
   return (
-    <Box display="flex" justifyContent="center" alignItems="center" h="100%">
-      <MyCard title="Sign In to your account">
-        <Box mb="5">
-          <Text textColor="gray">Email:</Text>
-          <Input
-            type="email"
-            value={email}
-            onChange={onEmailChange}
-            onKeyDown={handleKeyDown}
-            onBlur={onEmailBlur}
-            placeholder="Enter your email"
-            {...inputStyles}
-            borderColor={emailError ? "red.500" : "gray.300"}
-          />
-          {emailError && (
-            <Text color="red.500" fontSize="sm" float="right">
-              {emailError}
-            </Text>
-          )}
-        </Box>
-        <Box mb="5">
-          <Text textColor="gray">Password:</Text>
-          <InputGroup>
+    <>
+      <Box display="flex" justifyContent="center" alignItems="center" h="100%">
+        <MyCard title="Sign In to your account">
+          <Box mb="5">
+            <Text textColor="gray">Email:</Text>
             <Input
-              type={show ? "text" : "password"}
-              value={password}
-              onChange={onPasswordChange}
+              type="email"
+              value={email}
+              onChange={onEmailChange}
               onKeyDown={handleKeyDown}
-              onBlur={onPasswordBlur}
-              placeholder="Enter your password"
+              onBlur={onEmailBlur}
+              placeholder="Enter your email"
               {...inputStyles}
+              borderColor={emailError ? "red.500" : "gray.300"}
             />
-            <InputRightElement mt="5px" mr="15px">
-              <Button color="gray.500" onClick={handleClick}>
-                <Text decoration="underline">{show ? "Hide" : "Show"}</Text>
-              </Button>
-            </InputRightElement>
-          </InputGroup>
-          {passwordError && (
-            <Text color="red.500" fontSize="sm" mt="1" float="right">
-              {passwordError}
+            {emailError && (
+              <Text color="red.500" fontSize="sm" float="right">
+                {emailError}
+              </Text>
+            )}
+          </Box>
+          <Box mb="5">
+            <Text textColor="gray">Password:</Text>
+            <InputGroup>
+              <Input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={onPasswordChange}
+                onKeyDown={handleKeyDown}
+                onBlur={onPasswordBlur}
+                placeholder="Enter your password"
+                {...inputStyles}
+              />
+              <InputRightElement mt="5px" mr="15px">
+                <Button color="gray.500" onClick={handleClick}>
+                  <Text decoration="underline">
+                    {showPassword ? "Hide" : "Show"}
+                  </Text>
+                </Button>
+              </InputRightElement>
+            </InputGroup>
+            {passwordError && (
+              <Text color="red.500" fontSize="sm" mt="1" float="right">
+                {passwordError}
+              </Text>
+            )}
+          </Box>
+          <Button {...buttonStyles} onClick={handleLogin}>
+            Sign In
+          </Button>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            textColor="gray.500"
+            fontSize="sm"
+            mt="4"
+            w="100%"
+          >
+            <Text maxWidth="50%">
+              Don't have an account?
+              <ChakraLink as={RouterLink} to="/sign-up" color="blue.500">
+                {" "}
+                Sign Up
+              </ChakraLink>
             </Text>
-          )}
-        </Box>
-        <Button {...buttonStyles} onClick={handleLogin}>
-          Sign In
-        </Button>
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          textColor="gray.500"
-          fontSize="sm"
-          mt="4"
-          w="100%"
-        >
-          <Text maxWidth="50%">
-            Don't have an account?
-            <ChakraLink as={RouterLink} to="/sign-up" color="blue.500">
-              {" "}
-              Sign Up
-            </ChakraLink>
-          </Text>
-          <Text>
-            <ChakraLink as={RouterLink} to="/update-pwd" color="blue.500">
-              Forgot your password?
-            </ChakraLink>
-          </Text>
-        </Box>
-      </MyCard>
-    </Box>
+            <Text>
+              <ChakraLink as={RouterLink} to="/update-pwd" color="blue.500">
+                Forgot your password?
+              </ChakraLink>
+            </Text>
+          </Box>
+        </MyCard>
+      </Box>
+      <Modal
+        isOpen={isOpen}
+        onClose={() => {
+          onClose();
+          navigate("/all-products");
+        }}
+        isCentered
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <Prompt
+            status="success"
+            title="Login Success!"
+            description="Redirecting to product list"
+          />
+          <ModalCloseButton />
+        </ModalContent>
+      </Modal>
+    </>
   );
 };
 
