@@ -9,11 +9,17 @@ import {
   Image,
   VStack,
   Button,
+  ButtonGroup,
   Link as ChakraLink,
 } from "@chakra-ui/react";
 import { useParams, useNavigate, Link as RouterLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchProductDetails } from "../store/productSlice";
+import {
+  updateProductQuantity,
+  addProductToCart,
+  removeFromCart,
+} from "../store/cartSlice";
 
 const ProductDetailPage = () => {
   const dispatch = useDispatch();
@@ -21,10 +27,25 @@ const ProductDetailPage = () => {
   const isAdmin = useSelector((state) => state.auth.isAdmin);
   const { id } = useParams();
   const currentProduct = useSelector((state) => state.products.currentProduct);
+  const cartItems = useSelector((state) => state.cart.items);
 
   useEffect(() => {
     dispatch(fetchProductDetails(id));
   }, [dispatch]);
+
+  const onDecrease = (productId) => {
+    const index = cartItems.findIndex((item) => item.productId === productId);
+    if (cartItems[index].quantity === 1) {
+      dispatch(removeFromCart(productId));
+    } else {
+      dispatch(
+        updateProductQuantity({
+          productId,
+          quantity: cartItems[index].quantity - 1,
+        })
+      );
+    }
+  };
 
   return (
     <Box p={{ base: 2, md: 4 }} textColor="black">
@@ -86,9 +107,55 @@ const ProductDetailPage = () => {
             </Text>
 
             <HStack spacing={{ base: 2, md: 4 }}>
-              <Button colorScheme={"blue"} size={{ base: "sm", md: "md" }}>
-                Add to Cart
-              </Button>
+              {((cartItem) =>
+                cartItem && cartItem.quantity > 0 ? (
+                  <ButtonGroup colorScheme="orange" size="sm" isAttached>
+                    <Button onClick={() => onDecrease(cartItem.productId)}>
+                      -
+                    </Button>
+                    <Button
+                      value={cartItem.productId}
+                      onClick={() => {}}
+                      _hover={{
+                        transform: "none",
+                        boxShadow: "none",
+                      }}
+                      _focus={{ boxShadow: "none" }}
+                      _active={{ bg: "initial", transform: "none" }}
+                    >
+                      {cartItem.quantity}
+                    </Button>
+                    <Button
+                      onClick={() =>
+                        dispatch(
+                          updateProductQuantity({
+                            productId: cartItem.productId,
+                            quantity: cartItem.quantity + 1,
+                          })
+                        )
+                      }
+                    >
+                      +
+                    </Button>
+                  </ButtonGroup>
+                ) : (
+                  <Button
+                    onClick={() =>
+                      dispatch(
+                        addProductToCart({
+                          productId: id,
+                          productPrice: currentProduct.price,
+                          productName: currentProduct.name,
+                          productImageUrl: currentProduct.productImageUrl,
+                        })
+                      )
+                    }
+                    colorScheme="orange"
+                    size="sm"
+                  >
+                    Add to Cart
+                  </Button>
+                ))(cartItems.find((item) => item.productId === id))}
 
               {isAdmin && (
                 <ChakraLink as={RouterLink} to={`/edit-product/${id}`}>

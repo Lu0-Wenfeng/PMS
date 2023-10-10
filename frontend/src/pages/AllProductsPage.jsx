@@ -21,7 +21,11 @@ import {
   setCurrentPage,
   setSortOption,
 } from "../store/productSlice";
-import { addToCart } from "../store/cartSlice";
+import {
+  updateProductQuantity,
+  addProductToCart,
+  removeFromCart,
+} from "../store/cartSlice";
 
 const AllProductsPage = () => {
   const dispatch = useDispatch();
@@ -30,15 +34,14 @@ const AllProductsPage = () => {
   );
   const isAdmin = useSelector((state) => state.auth.isAdmin);
   const sortOption = useSelector((state) => state.products.sortOption);
+  const cartItems = useSelector((state) => state.cart.items);
   const [sortedProducts, setSortedProducts] = useState([]);
-  const [productsCount, setProductsCount] = useState({});
 
   const selectStyles = {
     variant: "outline",
     border: "1px solid",
     borderColor: "gray.300",
   };
-
 
   useEffect(() => {
     if (productList.length === 0) {
@@ -103,30 +106,18 @@ const AllProductsPage = () => {
     return pageButtons;
   };
 
-  const handleIncrease = (productId) => {
-    setProductsCount((prevCounts) => ({
-      ...prevCounts,
-      [productId]: (prevCounts[productId] || 0) + 1,
-    }));
-    if (productsCount[productId] === 1) {
-      // dispatch(addToCart());
+  const onDecrease = (productId) => {
+    const index = cartItems.findIndex((item) => item.productId === productId);
+    if (cartItems[index].quantity === 1) {
+      dispatch(removeFromCart(productId));
+    } else {
+      dispatch(
+        updateProductQuantity({
+          productId,
+          quantity: cartItems[index].quantity - 1,
+        })
+      );
     }
-  };
-
-  const handleDecrease = (productId) => {
-    setProductsCount((prevCounts) => {
-      if (prevCounts[productId] > 1) {
-        return {
-          ...prevCounts,
-          [productId]: prevCounts[productId] - 1,
-        };
-      } else if (prevCounts[productId] === 1) {
-        const newCounts = { ...prevCounts };
-        delete newCounts[productId];
-        return newCounts;
-      }
-      return prevCounts;
-    });
   };
 
   return (
@@ -186,7 +177,17 @@ const AllProductsPage = () => {
                     width="200px"
                     height="150px"
                   />
-                  <Text mt="2" fontWeight="medium" color={"gray"}  style={{ maxHeight: '2em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'  }}>
+                  <Text
+                    mt="2"
+                    fontWeight="medium"
+                    color={"gray"}
+                    style={{
+                      maxHeight: "2em",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
                     {product.name}
                   </Text>
                   <Text>
@@ -195,45 +196,67 @@ const AllProductsPage = () => {
                 </ChakraLink>
 
                 <HStack mt="2" spacing={{ base: 2, md: 5 }}>
-                  {productsCount[product._id] &&
-                  productsCount[product._id] > 0 ? (
-                    <ButtonGroup colorScheme="orange" size="sm" isAttached>
-                      <Button onClick={() => handleDecrease(product._id)}>
-                        -
-                      </Button>
+                  {((cartItem) =>
+                    cartItem && cartItem.quantity > 0 ? (
+                      <ButtonGroup colorScheme="orange" size="sm" isAttached>
+                        <Button onClick={() => onDecrease(cartItem.productId)}>
+                          -
+                        </Button>
+                        <Button
+                          value={cartItem.productId}
+                          onClick={() => {}}
+                          _hover={{
+                            transform: "none",
+                            boxShadow: "none",
+                          }}
+                          _focus={{ boxShadow: "none" }}
+                          _active={{ bg: "initial", transform: "none" }}
+                        >
+                          {cartItem.quantity}
+                        </Button>
+                        <Button
+                          onClick={() =>
+                            dispatch(
+                              updateProductQuantity({
+                                productId: cartItem.productId,
+                                quantity: cartItem.quantity + 1,
+                              })
+                            )
+                          }
+                        >
+                          +
+                        </Button>
+                      </ButtonGroup>
+                    ) : (
                       <Button
-                        value={productsCount[product._id]}
-                        onClick={() => {}}
-                        _hover={{
-                          transform: "none",
-                          boxShadow: "none",
-                        }}
-                        _focus={{ boxShadow: "none" }}
-                        _active={{ bg: "initial", transform: "none" }}
+                        onClick={() =>
+                          dispatch(
+                            addProductToCart({
+                              productId: product._id,
+                              productPrice: product.price,
+                              productName: product.name,
+                              productImageUrl: product.productImageUrl,
+                            })
+                          )
+                        }
+                        colorScheme="orange"
+                        size="sm"
                       >
-                        {productsCount[product._id]}
+                        Add to Cart
                       </Button>
-                      <Button onClick={() => handleIncrease(product._id)}>
-                        +
-                      </Button>
-                    </ButtonGroup>
-                  ) : (
-                    <Button
-                      onClick={() => handleIncrease(product._id)}
-                      colorScheme="orange"
-                      size="sm"
-                    >
-                      Add to Cart
-                    </Button>
+                    ))(
+                    cartItems.find((item) => item.productId === product._id)
                   )}
-                  {isAdmin && <ChakraLink
-                    as={RouterLink}
-                    to={`/edit-product/${product._id}`}
-                  >
-                    <Button colorScheme="orange" size="sm">
-                      Edit
-                    </Button>
-                  </ChakraLink>}
+                  {isAdmin && (
+                    <ChakraLink
+                      as={RouterLink}
+                      to={`/edit-product/${product._id}`}
+                    >
+                      <Button colorScheme="orange" size="sm">
+                        Edit
+                      </Button>
+                    </ChakraLink>
+                  )}
                 </HStack>
               </Box>
             ))}

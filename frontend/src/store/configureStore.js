@@ -4,7 +4,11 @@ import productSlice from "./productSlice";
 import cartSlice from "./cartSlice";
 
 const store = configureStore({
-  reducer: { auth: authSlice, products: productSlice, cart: cartSlice },
+  reducer: {
+    auth: authSlice,
+    products: productSlice,
+    cart: cartSlice,
+  },
 });
 
 export default store;
