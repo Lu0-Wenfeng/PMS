@@ -12,7 +12,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import MyCard from "../components/MyCard";
-import { userSignUp, setIsAdmin } from "../store/authSlice";
+import { userSignUp } from "../store/reducers/authSlice";
 
 const SignUp = () => {
   const navigate = useNavigate();

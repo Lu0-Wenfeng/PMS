@@ -20,12 +20,12 @@ import {
   fetchAllProducts,
   setCurrentPage,
   setSortOption,
-} from "../store/productSlice";
+} from "../store/reducers/productSlice";
 import {
   updateProductQuantity,
   addProductToCart,
   removeFromCart,
-} from "../store/cartSlice";
+} from "../store/reducers/cartSlice";
 
 const AllProductsPage = () => {
   const dispatch = useDispatch();
@@ -163,8 +163,11 @@ const AllProductsPage = () => {
             {currentProducts.map((product) => (
               <Box
                 key={product._id}
-                width={{ base: "100%", md: "50%", lg: "20%" }}
+                width={{ base: "100%", sm: "50%", md: "33%", lg: "25%" }}
                 p={{ base: 2, md: 2 }}
+                borderWidth="1px"
+                borderRadius="md"
+                overflow="hidden"
               >
                 <ChakraLink
                   as={RouterLink}
@@ -174,23 +177,20 @@ const AllProductsPage = () => {
                   <Image
                     src={product.productImageUrl || noImage}
                     alt={product.name}
-                    width="200px"
-                    height="150px"
+                    width="100%"
+                    height="200px"
+                    objectFit="cover"
                   />
                   <Text
                     mt="2"
                     fontWeight="medium"
-                    color={"gray"}
-                    style={{
-                      maxHeight: "2em",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
+                    fontSize="xl"
+                    color={"gray.600"}
+                    isTruncated
                   >
                     {product.name}
                   </Text>
-                  <Text>
+                  <Text fontSize="lg" color={"gray.500"}>
                     <strong>${product.price}</strong>
                   </Text>
                 </ChakraLink>

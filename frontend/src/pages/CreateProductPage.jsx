@@ -15,7 +15,7 @@ import {
   Image,
   Textarea,
 } from "@chakra-ui/react";
-import { createProduct } from "../store/productSlice";
+import { createProduct } from "../store/reducers/productSlice";
 
 const CreateProductPage = () => {
   const dispatch = useDispatch();

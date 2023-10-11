@@ -39,7 +39,7 @@ export const userSignUp = createAsyncThunk(
   ) => {
     console.log("Sign Up:", email, password, isAdmin);
     try {
-      const response = await axios.post("http://localhost:3000/sync-cart", {
+      const response = await axios.post("http://localhost:3000/sign-up", {
         email: email,
         password: password,
         isAdmin: isAdmin,
@@ -71,9 +71,11 @@ const authSlice = createSlice({
   reducers: {
     userLoggedIn: (state, action) => {
       state.isLoggedIn = true;
+      state.expireTimeStamp = Date.now() + 5 * 1000;
     },
     userLoggedOut: (state) => {
       state.isLoggedIn = false;
+      state.expireTimeStamp = null;
     },
   },
   extraReducers: (builder) => {
@@ -111,13 +113,8 @@ const authSlice = createSlice({
 });
 
 export const {
-  setIsAdmin,
   userLoggedIn,
   userLoggedOut,
-  setEmail,
-  setEmailError,
-  setPassword,
-  setPasswordError,
 } = authSlice.actions;
 
 export default authSlice.reducer;

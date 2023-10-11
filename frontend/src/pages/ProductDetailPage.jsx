@@ -14,12 +14,12 @@ import {
 } from "@chakra-ui/react";
 import { useParams, useNavigate, Link as RouterLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchProductDetails } from "../store/productSlice";
+import { fetchProductDetails } from "../store/reducers/productSlice";
 import {
   updateProductQuantity,
   addProductToCart,
   removeFromCart,
-} from "../store/cartSlice";
+} from "../store/reducers/cartSlice";
 
 const ProductDetailPage = () => {
   const dispatch = useDispatch();

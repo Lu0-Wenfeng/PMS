@@ -1,14 +1,14 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState } from "react";
 import {
   Input,
   InputGroup,
   InputRightElement,
   Button,
   Spinner,
-} from '@chakra-ui/react';
-import { BsSearch } from 'react-icons/bs';
-import { useDispatch } from 'react-redux';
-import { searchProducts } from '../store/productSlice';
+} from "@chakra-ui/react";
+import { BsSearch } from "react-icons/bs";
+import { useDispatch } from "react-redux";
+import { searchProducts } from "../store/reducers/productSlice";
 
 const SearchBar = () => {
   const [loading, setLoading] = useState(false);
@@ -25,8 +25,8 @@ const SearchBar = () => {
       try {
         await dispatch(searchProducts(query));
       } catch (error) {
-        setError('Search failed. Please try again.');
-        console.error('Search failed', error);
+        setError("Search failed. Please try again.");
+        console.error("Search failed", error);
       } finally {
         setLoading(false);
       }
@@ -41,7 +41,7 @@ const SearchBar = () => {
       }}
     >
       <InputGroup
-        maxW={{ base: '100%', sm: '400px', md: '500px', lg: '600px' }}
+        maxW={{ base: "100%", sm: "400px", md: "500px", lg: "600px" }}
         width="100%"
         mx="auto"
         mt="5px"
@@ -52,7 +52,7 @@ const SearchBar = () => {
           placeholder="Search"
           variant="outline"
           bg="white"
-          _placeholder={{ opacity: 1, color: 'gray.500' }}
+          _placeholder={{ opacity: 1, color: "gray.500" }}
         />
         <InputRightElement>
           <Button
@@ -61,14 +61,16 @@ const SearchBar = () => {
             onClick={handleSearch}
             isDisabled={loading}
           >
-            {loading ? <Spinner size="sm" color="white" /> : <BsSearch color="white" />}
+            {loading ? (
+              <Spinner size="sm" color="white" />
+            ) : (
+              <BsSearch color="white" />
+            )}
           </Button>
         </InputRightElement>
       </InputGroup>
       {error && (
-        <div style={{ color: 'red', marginTop: '5px' }}>
-          Error: {error}
-        </div>
+        <div style={{ color: "red", marginTop: "5px" }}>Error: {error}</div>
       )}
     </form>
   );

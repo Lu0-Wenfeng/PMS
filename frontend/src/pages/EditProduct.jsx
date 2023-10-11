@@ -25,7 +25,7 @@ import {
   fetchProductDetails,
   updateProduct,
   deleteProduct,
-} from "../store/productSlice";
+} from "../store/reducers/productSlice";
 import Prompt from "../components/Prompt";
 
 const EditProduct = () => {

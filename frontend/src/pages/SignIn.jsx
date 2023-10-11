@@ -15,7 +15,7 @@ import {
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
-import { userSignIn, setIsAdmin } from "../store/authSlice";
+import { userSignIn } from "../store/reducers/authSlice";
 import Prompt from "../components/Prompt";
 import MyCard from "../components/MyCard";
 
@@ -96,13 +96,12 @@ const SignIn = () => {
     }
 
     try {
-      const { userType } = await dispatch(
+      await dispatch(
         userSignIn({ email, password })
       ).unwrap();
-      userType === "admin" && dispatch(setIsAdmin(true));
       onOpen();
     } catch (error) {
-      console.log("error:",error);
+      console.log("error:", error);
       if (error.message === "User Not exist") {
         setEmailError(error.message);
       } else if (error.message === "Incorrect Password") {

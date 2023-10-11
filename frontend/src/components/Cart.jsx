@@ -21,12 +21,12 @@ import { BsCart3 } from "react-icons/bs";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { userLoggedIn } from "../store/authSlice";
+import { userLoggedIn } from "../store/reducers/authSlice";
 import {
   updateProductQuantity,
   addProductToCart,
   removeFromCart,
-} from "../store/cartSlice";
+} from "../store/reducers/cartSlice";
 
 const Cart = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);

@@ -17,14 +17,11 @@ const userSchema = new mongoose.Schema({
     default: false,
   },
   // TODO: combine with Product
-  cart: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Cart",
-    },
-  ],
+  cart: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Cart",
+  },
 });
-
 
 userSchema.methods.comparePassword = async function (candidatePassword, next) {
   try {

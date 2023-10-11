@@ -9,6 +9,7 @@ exports.syncCartWithServer = async (req, res) => {
 
   try {
     let cart = await Cart.findOne({ user: userId });
+    const user = await User.findById(userId);
 
     if (!cart) {
       cart = new Cart({
@@ -16,6 +17,12 @@ exports.syncCartWithServer = async (req, res) => {
         products: [],
       });
     }
+
+    if (user.cart !== cart._id) {
+      user.cart = cart._id;
+      await user.save();
+    }
+
     const cartPromises = inCartItems.map(async (item) => {
       const product = await Product.findById(item.productId);
 

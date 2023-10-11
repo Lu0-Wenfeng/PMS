@@ -13,7 +13,7 @@ import { BsFillPersonFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { userLoggedIn, handleLogout } from "../store/authSlice";
+import { userLoggedIn, handleLogout } from "../store/reducers/authSlice";
 
 const Profile = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);

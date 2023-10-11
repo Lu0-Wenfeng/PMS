@@ -7,17 +7,18 @@ Cart = require("../models/cart");
 exports.signup = async (req, res) => {
   try {
     const { email, password, isAdmin } = req.body;
+    console.log("Incoming signup request", email, password, isAdmin);
 
     // Check if the username already exists
     const existingUser = await User.findOne({ email });
-
+    console.log("existing user", existingUser);
     if (existingUser) {
       return res.status(400).json({ message: "Username already exists" });
     }
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
-
+    console.log("Hashed password", hashedPassword);
     // Create a new user
     const newUser = new User({
       email,
@@ -26,23 +27,23 @@ exports.signup = async (req, res) => {
     });
 
     await newUser.save();
-
+    console.log("New user", newUser);
     // Determine user type (admin or regular user)
     const userType = isAdmin ? "admin" : "regular";
-    const userData = { userId: user._id, userType };
+    const userData = { userId: newUser._id, userType };
     req.userData = userData;
+    console.log("userData", userData);
     // Generate JWT token with user type as a claim
-    const token = jwt.sign(
-      userData,
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "1h", // Token expiration time
-      }
-    );
+    const token = jwt.sign(userData, process.env.JWT_SECRET, {
+      expiresIn: "1h", // Token expiration time
+    });
 
-    res
-      .status(201)
-      .json({ message: "Signup successful", isAdmin: isAdmin, email: email, token });
+    res.status(201).json({
+      message: "Signup successful",
+      isAdmin: isAdmin,
+      email: email,
+      token,
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
@@ -52,7 +53,6 @@ exports.signup = async (req, res) => {
 exports.signin = async (req, res) => {
   try {
     const { email, password } = req.body;
-    
 
     // Check if the user exists
     const user = await User.findOne({ email });

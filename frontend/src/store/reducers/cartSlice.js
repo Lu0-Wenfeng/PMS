@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk, current } from "@reduxjs/toolkit";
 import axios from "axios";
 
+// After checkout, clear the cart
+
 export const syncCartWithServer = createAsyncThunk(
   "cart/saveCartOnLogging",
   async (_, { rejectWithValue, getState }) => {
