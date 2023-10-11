@@ -1,9 +1,33 @@
 import { createSlice, createAsyncThunk, current } from "@reduxjs/toolkit";
 import axios from "axios";
 
+export const syncCartWithServer = createAsyncThunk(
+  "cart/saveCartOnLogging",
+  async (_, { rejectWithValue, getState }) => {
+    try {
+      const token = localStorage.getItem("token");
+      const productsList = getState().products.productList;
+      const response = await axios.post(
+        "http://localhost:3000/sync-cart",
+        getState().cart.items,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return { ...response.data, productsList };
+    } catch (error) {
+      console.log("have an error", error);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 const cartSlice = createSlice({
   name: "cart",
-  initialState: { items: [], total: 0 },
+  initialState: { items: [], total: 0, error: null },
   reducers: {
     addProductToCart: (state, action) => {
       state.items.push({
@@ -38,6 +62,45 @@ const cartSlice = createSlice({
       );
       state.total = Math.round(state.total * 100) / 100;
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(syncCartWithServer.fulfilled, (state, action) => {
+        console.log("debug: ", action.payload);
+        state.items = action.payload.syncedCart
+          .map((syncedItem) => {
+            const productDetails = action.payload.productsList.find(
+              (product) => product._id === syncedItem.product
+            );
+            if (productDetails) {
+              const subTotal = (
+                parseInt(syncedItem.quantity) *
+                parseFloat(productDetails.price)
+              );
+              console.log("subTotal", subTotal);
+              return {
+                productId: syncedItem.product,
+                quantity: syncedItem.quantity,
+                productName: productDetails.name,
+                productPrice: productDetails.price,
+                productImageUrl: productDetails.productImageUrl,
+                subTotal,
+              };
+            }
+            return null;
+          })
+          .filter((item) => item !== null);
+        // Recalculate total
+        state.total = state.items.reduce(
+          (total, item) => total + item.subTotal,
+          0
+        );
+        state.total = Math.round(state.total * 100) / 100;
+      })
+      .addCase(syncCartWithServer.rejected, (state, action) => {
+        state.error =
+          action.payload || "An error occurred while saving the cart.";
+      });
   },
 });
 
