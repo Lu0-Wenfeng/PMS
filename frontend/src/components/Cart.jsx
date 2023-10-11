@@ -192,7 +192,7 @@ const Cart = () => {
               </Flex>
               <Flex justifyContent="space-between" w="100%">
                 <Text>Tax(7%)</Text>
-                <Text>$ {(Math.round(totalPrice * 7) / 100).toFixed(2)}</Text>
+                <Text>$ {((totalPrice * 7) / 100).toFixed(2)}</Text>
               </Flex>
               <Flex justifyContent="space-between" w="100%">
                 <Text>Discount</Text>
@@ -203,7 +203,7 @@ const Cart = () => {
                   Estimated total
                 </Text>
                 <Text fontSize="2xl" fontWeight="bold">
-                  $ {Math.round(totalPrice + (totalPrice * 7) / 100).toFixed(2)}
+                  $ {(totalPrice + (totalPrice * 7) / 100).toFixed(2)}
                 </Text>
               </Flex>
             </VStack>
