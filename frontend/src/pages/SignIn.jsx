@@ -102,13 +102,14 @@ const SignIn = () => {
       userType === "admin" && dispatch(setIsAdmin(true));
       onOpen();
     } catch (error) {
+      console.log("error:",error);
       if (error.message === "User Not exist") {
         setEmailError(error.message);
       } else if (error.message === "Incorrect Password") {
         setPasswordError(error.message);
       } else {
-        console.error("Error logging in", error.message);
-        navigate("./error");
+        console.error("Error logging in: ", error.message);
+        navigate("/error");
       }
     }
   };
