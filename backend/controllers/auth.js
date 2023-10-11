@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 User = require("../models/user");
 Product = require("../models/product");
-cart = require("../models/cart");
+Cart = require("../models/cart");
 
 exports.signup = async (req, res) => {
   try {
@@ -27,7 +27,22 @@ exports.signup = async (req, res) => {
 
     await newUser.save();
 
-    res.status(201).json({ message: "Signup successful", isAdmin: isAdmin, email: email });
+    // Determine user type (admin or regular user)
+    const userType = isAdmin ? "admin" : "regular";
+    const userData = { userId: user._id, userType };
+    req.userData = userData;
+    // Generate JWT token with user type as a claim
+    const token = jwt.sign(
+      userData,
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1h", // Token expiration time
+      }
+    );
+
+    res
+      .status(201)
+      .json({ message: "Signup successful", isAdmin: isAdmin, email: email, token });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
@@ -37,7 +52,7 @@ exports.signup = async (req, res) => {
 exports.signin = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("Signed In", email, password);
+    
 
     // Check if the user exists
     const user = await User.findOne({ email });
@@ -56,12 +71,15 @@ exports.signin = async (req, res) => {
     // Determine user type (admin or regular user)
     const userType = user.isAdmin ? "admin" : "regular";
 
+    const userData = { userId: user._id, userType };
+    req.userData = userData;
     // Generate JWT token with user type as a claim
-    const token = jwt.sign({ userId: user._id, userType }, process.env.JWT_SECRET, {
+    const token = jwt.sign(userData, process.env.JWT_SECRET, {
       expiresIn: "1h", // Token expiration time
     });
 
     res.status(200).json({ token, isAdmin: user.isAdmin, email: user.email });
+    console.log(`User ${email} signed in`);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
@@ -69,7 +87,7 @@ exports.signin = async (req, res) => {
 };
 
 // Logout Route (not usually needed for token-based authentication)
-exports.logout = (req, res) => {
+exports.logout = (req, res, next) => {
   // For token-based authentication, the client can simply discard the token.
   // 在前端 这里只需要丢弃令牌 例如：
   // localStorage.removeItem('token');
@@ -77,7 +95,7 @@ exports.logout = (req, res) => {
 };
 
 // Update the password
-exports.updatePassword = async (req, res) => {
+exports.updatePassword = async (req, res, next) => {
   try {
     const { email, currentPassword, newPassword } = req.body;
 
@@ -106,6 +124,7 @@ exports.updatePassword = async (req, res) => {
     await user.save();
 
     res.status(200).json({ message: "Password updated successfully" });
+    next();
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
