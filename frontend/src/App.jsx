@@ -1,7 +1,11 @@
 import { Grid, GridItem } from "@chakra-ui/react";
 import { useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { Provider } from "react-redux";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
 import Footer from "./components/Layout/Footer";
 import Header from "./components/Layout/Header";
@@ -16,21 +20,19 @@ import ProductDetailPage from "./pages/ProductDetailPage";
 import EditProductPage from "./pages/EditProduct";
 import ErrorPage from "./pages/ErrorPage";
 
-import store from "./store/configureStore";
-
 function App() {
   const [searchInput, setSearchInput] = useState("");
 
   return (
-    <Provider store={store}>
       <Router>
-      <Grid
+        <Grid
+          h="100vh"
           templateAreas={`"header" "main" "footer"`}
-          gridTemplateRows={"auto 1fr 85px"}  
+          gridTemplateRows={"auto 1fr 85px"}
           gridTemplateColumns={"100%"}
           autoFlow={"column"}
         >
-          <GridItem bg="#111827" area={"header"} >
+          <GridItem bg="#111827" area={"header"}>
             <Header onSearch={(searchText) => setSearchInput(searchText)} />
           </GridItem>
 
@@ -48,7 +50,10 @@ function App() {
               <Route path="/create-product" element={<CreateProductPage />} />
               <Route path="/all-products" element={<AllProductsPage />} />
               <Route path="/all-products/:id" element={<ProductDetailPage />} />
-              <Route path="/search-product/:query" element={<AllProductsPage/>} />
+              <Route
+                path="/search-product/:query"
+                element={<AllProductsPage />}
+              />
               <Route path="/edit-product/:id" element={<EditProductPage />} />
             </Routes>
           </GridItem>
@@ -57,7 +62,6 @@ function App() {
           </GridItem>
         </Grid>
       </Router>
-    </Provider>
   );
 }
 
