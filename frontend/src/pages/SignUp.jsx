@@ -85,20 +85,6 @@ const SignUp = () => {
     }
   };
 
-  // const handleIsAdminChange = (e) => {
-  //   dispatch(setIsAdmin(e.target.checked));
-  // };
-
-  // const handleSignUp = async () => {
-  //   try {
-  //     await dispatch(userSignUp({ email, password, isAdmin })).unwrap();
-  //     alert("Signed Up Successfully");
-  //     navigate("/success");
-  //   } catch (error) {
-  //     console.error("Error signing up", error.message);
-  //   }
-  // };
-
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
       handleSignUp();
