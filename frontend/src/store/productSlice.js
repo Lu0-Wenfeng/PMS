@@ -129,10 +129,10 @@ export const deleteProduct = createAsyncThunk(
 );
 
 export const searchProducts = createAsyncThunk(
-  'products/searchProducts',
+  "products/searchProducts",
   async (query, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const response = await axios.get(
         `http://localhost:3000/search-product/${query}`,
         {
@@ -165,7 +165,7 @@ const productSlice = createSlice({
       .addCase(createProduct.fulfilled, (state, action) => {
         const { newProduct } = action.payload.product;
         console.log("Product created successfully");
-        state.productList = { ...state.productList, newProduct };
+        state.productList = [{ ...state.productList, newProduct }];
       })
       .addCase(createProduct.rejected, (state, action) => {
         console.error("Product creation failed", action.payload);
@@ -213,7 +213,7 @@ const productSlice = createSlice({
         state.totalPages = Math.ceil(state.productList.length / ITEMS_PER_PAGE);
       })
       .addCase(searchProducts.rejected, (state, action) => {
-        console.error('Search failed', action.error);
+        console.error("Search failed", action.error);
       });
   },
 });
