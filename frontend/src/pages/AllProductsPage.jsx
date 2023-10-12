@@ -122,7 +122,7 @@ const AllProductsPage = () => {
   };
 
   return (
-    <Box p={{ base: 2, md: 4 }} textColor="black">
+    <Box backgroundColor="white" p={{ base: 2, md: 4 }} textColor="black">
       <Flex
         direction={{ base: "column", md: "row" }}
         align="center"

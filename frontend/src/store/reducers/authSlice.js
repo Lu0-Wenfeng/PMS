@@ -76,6 +76,7 @@ const authSlice = createSlice({
     userLoggedOut: (state) => {
       state.isLoggedIn = false;
       state.expireTimeStamp = null;
+      state.isAdmin = false;
     },
   },
   extraReducers: (builder) => {
