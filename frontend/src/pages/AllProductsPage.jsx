@@ -13,6 +13,7 @@ import {
   Link as ChakraLink,
   Select,
   HStack,
+  Grid,
 } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import {
@@ -159,12 +160,22 @@ const AllProductsPage = () => {
         <Text>No products available.</Text>
       ) : (
         <>
-          <Flex flexWrap="wrap">
+          <Grid
+            templateColumns={{
+              base: "repeat(1, 1fr)", // 基础（手机）: 1列
+              sm: "repeat(2, 1fr)", // 小型屏幕: 2列
+              md: "repeat(3, 1fr)", // 中型屏幕: 3列
+              lg: "repeat(4, 1fr)", // 大型屏幕: 4列
+              xl: "repeat(5, 1fr)", // 超大屏幕: 5列
+            }}
+            gap={6} // 根据需要调整网格之间的间隔
+          >
             {currentProducts.map((product) => (
               <Box
                 key={product._id}
-                width={{ base: "100%", sm: "50%", md: "33%", lg: "25%" }}
                 p={{ base: 2, md: 2 }}
+                minW={{ base: "250px", sm: "auto" }}
+                borderColor="black"
                 borderWidth="1px"
                 borderRadius="md"
                 overflow="hidden"
@@ -179,7 +190,8 @@ const AllProductsPage = () => {
                     alt={product.name}
                     width="100%"
                     height="200px"
-                    objectFit="cover"
+                    objectFit="contain"
+                    objectPosition="center"
                   />
                   <Text
                     mt="2"
@@ -190,7 +202,7 @@ const AllProductsPage = () => {
                   >
                     {product.name}
                   </Text>
-                  <Text fontSize="lg" color={"gray.500"}>
+                  <Text fontSize="lg" color={"black"}>
                     <strong>${product.price}</strong>
                   </Text>
                 </ChakraLink>
@@ -260,7 +272,7 @@ const AllProductsPage = () => {
                 </HStack>
               </Box>
             ))}
-          </Flex>
+          </Grid>
           <Box
             mt="4"
             display="flex"
