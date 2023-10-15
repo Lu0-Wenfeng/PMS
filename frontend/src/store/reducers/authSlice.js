@@ -71,11 +71,9 @@ const authSlice = createSlice({
   reducers: {
     userLoggedIn: (state, action) => {
       state.isLoggedIn = true;
-      state.expireTimeStamp = Date.now() + 5 * 1000;
     },
     userLoggedOut: (state) => {
       state.isLoggedIn = false;
-      state.expireTimeStamp = null;
       state.isAdmin = false;
     },
   },
