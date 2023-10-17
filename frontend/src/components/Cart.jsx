@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   ButtonGroup,
   Drawer,
@@ -7,25 +8,20 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerOverlay,
-  Text,
-  Box,
-  Input,
-  Image,
-  HStack,
   Flex,
-  VStack,
+  Image,
+  Input,
   InputGroup,
   InputRightAddon,
+  Text,
+  VStack
 } from "@chakra-ui/react";
+import React, { useState } from "react";
 import { BsCart3 } from "react-icons/bs";
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { userLoggedIn } from "../store/reducers/authSlice";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  updateProductQuantity,
-  addProductToCart,
   removeFromCart,
+  updateProductQuantity
 } from "../store/reducers/cartSlice";
 
 const Cart = () => {
@@ -140,7 +136,7 @@ const Cart = () => {
                       </Box>
                       <VStack align="start" spacing={1} flex="2">
                         <Text fontWeight="bold">{item.productName}</Text>
-                        <Text fontSize="xl" color="yellow.300">
+                        <Text fontSize="xl" color="orange.600">
                           $ {Math.round(item.subTotal * 100) / 100}
                         </Text>
                       </VStack>
