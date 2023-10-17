@@ -192,7 +192,7 @@ const Cart = () => {
               </Flex>
               <Flex justifyContent="space-between" w="100%">
                 <Text>Discount</Text>
-                <Text>-$0.00</Text>
+                <Text>-$ 0.00</Text>
               </Flex>
               <Flex justifyContent="space-between" w="100%">
                 <Text fontSize="2xl" fontWeight="bold">
