@@ -60,7 +60,7 @@ exports.productDeatails = async (req, res) => {
   }
 };
 
-// 当数据量增大时，应该按页码获取商品信息，目前先这样吧
+// 
 exports.getAllProducts = async (req, res) => {
   try {
     const userData = req.userData;

@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  // TODO: combine with Product
+
   cart: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Cart",
