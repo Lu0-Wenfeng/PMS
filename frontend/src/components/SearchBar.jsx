@@ -5,20 +5,32 @@ import {
   InputRightElement,
   Button,
   Spinner,
+  List,
+  ListItem,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { BsSearch } from "react-icons/bs";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { searchProducts } from "../store/reducers/productSlice";
 
 const SearchBar = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [results, setResults] = useState([]);
   const ref = useRef(null);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const allProducts = useSelector((state) => state.product?.productList);
 
   const handleSearch = async () => {
     if (ref.current) {
       const query = ref.current.value.toLowerCase();
+      const regex = new RegExp(ref.current.value, "i");
+      const matchedProducts = allProducts.filter((product) =>
+        regex.test(product.name)
+      );
+      setResults(matchedProducts);
       setLoading(true);
       setError(null);
 
@@ -41,12 +53,13 @@ const SearchBar = () => {
       }}
     >
       <InputGroup
-        maxW={{ base: "100%", sm: "400px", md: "500px", lg: "600px" }}
+        maxW={{ base: "100%", sm: "400px", md: "600px", lg: "800px" }}
         width="100%"
         mx="auto"
         mt="5px"
       >
         <Input
+          textColor="black"
           ref={ref}
           borderRadius={10}
           placeholder="Search"
@@ -69,6 +82,33 @@ const SearchBar = () => {
           </Button>
         </InputRightElement>
       </InputGroup>
+
+      {results.length > 0 && (
+        <Box
+          position="absolute"
+          mt="2"
+          w="100%"
+          bg="white"
+          boxShadow="md"
+          borderRadius="md"
+          zIndex="10"
+        >
+          <List spacing={2}>
+            {results.slice(0, 5).map(
+              (
+                product // 仅显示前5个搜索结果
+              ) => (
+                <ListItem key={product._id} cursor="pointer">
+                  <ChakraLink as={RouterLink} to={"./product._id"}>
+                    {product.name}
+                  </ChakraLink>
+                </ListItem>
+              )
+            )}
+          </List>
+        </Box>
+      )}
+
       {error && (
         <div style={{ color: "red", marginTop: "5px" }}>Error: {error}</div>
       )}
